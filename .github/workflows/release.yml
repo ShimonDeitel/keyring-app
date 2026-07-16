@@ -1,0 +1,104 @@
+name: Release to App Store
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths: ['iOS/**']
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      APP_NAME: Keyring
+      SCHEME: Keyring
+      BUNDLE_ID: com.shimondeitel.keyring
+      TEAM_ID: W7Q885Q59C
+      SIGN_IDENTITY_SHA1: 28783A84B07D8DFC5FCF311F7B4D7FB46594C728
+      APP_ID: "6788092339"
+    defaults:
+      run:
+        working-directory: iOS
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - run: xcodebuild -version
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - name: Derive correct project/scheme name from project.yml
+        run: |
+          PROJ=$(grep -m1 '^name:' project.yml | sed 's/^name:[[:space:]]*//')
+          echo "APP_NAME=$PROJ" >> "$GITHUB_ENV"
+          echo "SCHEME=$PROJ" >> "$GITHUB_ENV"
+
+      - name: Prepare ASC key
+        env:
+          ASC_KEY_BASE64: ${{ secrets.ASC_KEY_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo -n "$ASC_KEY_BASE64" | base64 --decode -o ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8
+
+      - name: Import signing certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+        run: |
+          CERT_PATH="$RUNNER_TEMP/cert.p12"; KEYCHAIN="$RUNNER_TEMP/app.keychain-db"
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
+          security create-keychain -p "ci" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "ci" "$KEYCHAIN"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security list-keychain -d user -s "$KEYCHAIN" login.keychain-db
+          security set-key-partition-list -S apple-tool:,apple: -s -k "ci" "$KEYCHAIN" >/dev/null
+
+      - name: Install provisioning profile
+        env:
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          PP_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"; mkdir -p "$PP_DIR"
+          echo -n "$PROVISIONING_PROFILE_BASE64" | base64 --decode -o "$PP_DIR/profile.mobileprovision"
+
+      - name: Archive
+        env:
+          PROFILE_NAME: ${{ secrets.PROFILE_NAME }}
+        run: |
+          xcodebuild archive -project "$APP_NAME.xcodeproj" -scheme "$SCHEME" -configuration Release \
+            -archivePath "$RUNNER_TEMP/$APP_NAME.xcarchive" -destination 'generic/platform=iOS' \
+            CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="$TEAM_ID" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" CODE_SIGN_IDENTITY="$SIGN_IDENTITY_SHA1" \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER"
+
+      - name: Export IPA
+        env:
+          PROFILE_NAME: ${{ secrets.PROFILE_NAME }}
+        run: |
+          cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+          <key>method</key><string>app-store-connect</string>
+          <key>teamID</key><string>$TEAM_ID</string>
+          <key>signingStyle</key><string>manual</string>
+          <key>signingCertificate</key><string>Apple Distribution</string>
+          <key>provisioningProfiles</key><dict><key>com.shimondeitel.keyring</key><string>$PROFILE_NAME</string></dict>
+          <key>destination</key><string>export</string>
+          <key>uploadSymbols</key><true/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/$APP_NAME.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$RUNNER_TEMP/export"
+
+      - name: Upload to App Store Connect
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          IPA=$(ls "$RUNNER_TEMP/export/"*.ipa | head -1)
+          set -o pipefail
+          xcrun altool --upload-app -f "$IPA" -t ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" 2>&1 | tee "$RUNNER_TEMP/upload.log"
+          if ! grep -q "UPLOAD SUCCEEDED\|No errors uploading" "$RUNNER_TEMP/upload.log"; then
+            echo "Real upload failure detected despite altool exit code"; exit 1
+          fi

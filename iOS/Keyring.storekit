@@ -1,0 +1,29 @@
+{
+  "identifier" : "keyring",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "keyring_pro_unlock",
+      "localizations" : [
+        {
+          "description" : "Unlocks unlimited identified keys",
+          "displayName" : "Keyring Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "keyring_pro_unlock",
+      "referenceName" : "Keyring Pro Unlock",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
