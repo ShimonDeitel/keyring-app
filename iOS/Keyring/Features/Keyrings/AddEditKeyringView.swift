@@ -1,9 +1,25 @@
 import SwiftUI
 
-private let keyringIconChoices = [
+let keyringIconChoices = [
     "key.fill", "house.fill", "car.fill", "briefcase.fill",
     "shippingbox.fill", "building.2.fill", "sailboat.fill", "leaf.fill"
 ]
+
+/// One accent per keyring icon choice, shared by the icon picker grid and
+/// every keyring row/avatar so a ring's color stays consistent everywhere
+/// it appears.
+func keyringIconColor(for symbol: String) -> Color {
+    switch symbol {
+    case "house.fill": return KeyCategory.house.color
+    case "car.fill": return KeyCategory.car.color
+    case "briefcase.fill": return KeyCategory.office.color
+    case "shippingbox.fill": return KeyCategory.storage.color
+    case "building.2.fill": return Color(red: 0.35, green: 0.42, blue: 0.50)
+    case "sailboat.fill": return Color(red: 0.22, green: 0.48, blue: 0.50)
+    case "leaf.fill": return Color(red: 0.35, green: 0.53, blue: 0.32)
+    default: return KRTheme.brass
+    }
+}
 
 struct AddEditKeyringView: View {
     @Environment(\.dismiss) private var dismiss
@@ -32,14 +48,17 @@ struct AddEditKeyringView: View {
                 Section("Icon") {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                         ForEach(keyringIconChoices, id: \.self) { symbol in
+                            let color = keyringIconColor(for: symbol)
                             Button {
                                 icon = symbol
                             } label: {
                                 Image(systemName: symbol)
-                                    .font(.system(size: 20))
-                                    .foregroundStyle(icon == symbol ? .white : KRTheme.brass)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 22, height: 22)
+                                    .foregroundStyle(icon == symbol ? .white : color)
                                     .frame(width: 44, height: 44)
-                                    .background(icon == symbol ? KRTheme.brass : KRTheme.surfaceRaised)
+                                    .background(icon == symbol ? color : color.opacity(0.16))
                                     .clipShape(RoundedRectangle(cornerRadius: KRTheme.smallCorner))
                             }
                             .buttonStyle(.plain)

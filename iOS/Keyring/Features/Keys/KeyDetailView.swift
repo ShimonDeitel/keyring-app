@@ -133,7 +133,7 @@ struct KeyDetailView: View {
 
     private var header: some View {
         HStack(spacing: KRTheme.Spacing.md) {
-            KeyPhotoView(photoData: key.photoData, symbolName: key.category.symbolName, size: 88)
+            KeyPhotoView(photoData: key.photoData, symbolName: key.category.symbolName, tintColor: key.category.color, size: 88)
             VStack(alignment: .leading, spacing: 4) {
                 Text(key.name)
                     .font(.system(.title2, design: .rounded).weight(.bold))
@@ -144,8 +144,8 @@ struct KeyDetailView: View {
                         .foregroundStyle(KRTheme.inkFaded)
                 }
                 Label(key.category.displayName, systemImage: key.category.symbolName)
-                    .font(.caption)
-                    .foregroundStyle(KRTheme.brass)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(key.category.color)
             }
             Spacer()
         }

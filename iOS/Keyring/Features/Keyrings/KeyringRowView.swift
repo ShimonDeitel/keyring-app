@@ -6,12 +6,15 @@ struct KeyringRowView: View {
 
     var body: some View {
         HStack(spacing: 14) {
+            let color = keyringIconColor(for: keyring.icon)
             ZStack {
                 RoundedRectangle(cornerRadius: KRTheme.smallCorner)
-                    .fill(KRTheme.surfaceRaised)
+                    .fill(color.opacity(0.16))
                 Image(systemName: keyring.icon)
-                    .font(.system(size: 20))
-                    .foregroundStyle(KRTheme.brass)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 22, height: 22)
+                    .foregroundStyle(color)
             }
             .frame(width: 44, height: 44)
 

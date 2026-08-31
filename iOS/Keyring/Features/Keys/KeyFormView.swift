@@ -39,7 +39,9 @@ struct KeyFormView: View {
                         .accessibilityIdentifier("keyLabelField")
                     Picker("Category", selection: $category) {
                         ForEach(KeyCategory.allCases) { cat in
-                            Label(cat.displayName, systemImage: cat.symbolName).tag(cat)
+                            Label(cat.displayName, systemImage: cat.symbolName)
+                                .foregroundStyle(cat.color)
+                                .tag(cat)
                         }
                     }
                     TextField("Note (e.g. brass, top of the ring)", text: $notes)
@@ -53,7 +55,7 @@ struct KeyFormView: View {
                 Section("Photo") {
                     PhotosPicker(selection: $pickerItem, matching: .images) {
                         HStack {
-                            KeyPhotoView(photoData: photoData, symbolName: category.symbolName, size: 44)
+                            KeyPhotoView(photoData: photoData, symbolName: category.symbolName, tintColor: category.color, size: 44)
                             Text(photoData != nil ? "Photo added" : "Add a photo of this key")
                                 .foregroundStyle(KRTheme.ink)
                         }
@@ -189,7 +191,7 @@ private struct DuplicateCandidatesSheet: View {
                         VStack(spacing: 10) {
                             ForEach(Array(candidates.enumerated()), id: \.offset) { _, candidate in
                                 HStack(spacing: 12) {
-                                    KeyPhotoView(photoData: candidate.key.photoData, symbolName: candidate.key.category.symbolName, size: 44)
+                                    KeyPhotoView(photoData: candidate.key.photoData, symbolName: candidate.key.category.symbolName, tintColor: candidate.key.category.color, size: 44)
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(candidate.key.name)
                                             .font(.subheadline.weight(.semibold))

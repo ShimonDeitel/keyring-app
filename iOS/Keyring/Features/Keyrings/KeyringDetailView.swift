@@ -178,7 +178,7 @@ struct KeyRingFanView: View {
         VStack(spacing: 8) {
             ZStack {
                 ForEach(Array(keys.prefix(8).enumerated()), id: \.offset) { index, key in
-                    KeyPhotoView(photoData: key.photoData, symbolName: key.category.symbolName, size: 40)
+                    KeyPhotoView(photoData: key.photoData, symbolName: key.category.symbolName, tintColor: key.category.color, size: 40)
                         .offset(fannedOffset(index: index, total: min(keys.count, 8)))
                         .rotationEffect(.degrees(isFanned ? fannedAngle(index: index, total: min(keys.count, 8)) : 0))
                         .zIndex(Double(keys.count - index))
@@ -228,7 +228,7 @@ struct KeyRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            KeyPhotoView(photoData: key.photoData, symbolName: key.category.symbolName, size: 48)
+            KeyPhotoView(photoData: key.photoData, symbolName: key.category.symbolName, tintColor: key.category.color, size: 48)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
