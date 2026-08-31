@@ -2,8 +2,13 @@ import XCTest
 
 /// Note on photo coverage: PhotosPicker cannot be reliably driven via
 /// XCUITest in the simulator. Photo attachment is optional-but-encouraged
-/// (only `label` is required to save), so every add/edit/delete/paywall
+/// (only `name` is required to save), so every add/edit/delete/paywall
 /// flow below is fully exercisable without touching the picker.
+///
+/// Fresh installs now start with zero keys (onboarding leads straight into
+/// "add a key" instead of pre-seeded sample data) — UI tests bypass the
+/// onboarding screen via `-uiTestReset` (see `KeyringApp.init`) and add
+/// whatever keys each test needs.
 final class KeyringUITests: XCTestCase {
     private var interruptionMonitorToken: NSObjectProtocol?
 
@@ -34,20 +39,20 @@ final class KeyringUITests: XCTestCase {
         return app
     }
 
-    func testAddKeyFromMainList() throws {
-        let app = launchApp()
-
+    private func addKey(_ app: XCUIApplication, name: String) {
         let addButton = app.buttons["addKeyButton"]
         XCTAssertTrue(addButton.waitForExistence(timeout: 12))
         addButton.tap()
-
         let labelField = app.textFields["keyLabelField"]
         XCTAssertTrue(labelField.waitForExistence(timeout: 12))
         labelField.tap()
-        labelField.typeText("Storage Unit")
-
+        labelField.typeText(name)
         app.buttons["saveKeyButton"].tap()
+    }
 
+    func testAddKeyFromMainList() throws {
+        let app = launchApp()
+        addKey(app, name: "Storage Unit")
         XCTAssertTrue(app.staticTexts["Storage Unit"].waitForExistence(timeout: 12), "New key did not appear on the list")
     }
 
@@ -72,12 +77,14 @@ final class KeyringUITests: XCTestCase {
 
     func testEditKeyChangesLabel() throws {
         let app = launchApp()
-        // Seed data includes "Front Door"; open its row menu to edit.
+        addKey(app, name: "Front Door")
+
         let row = app.staticTexts["Front Door"]
         XCTAssertTrue(row.waitForExistence(timeout: 12))
+        row.tap()
 
         let menuButton = app.buttons["keyMenu_Front Door"]
-        XCTAssertTrue(menuButton.waitForExistence(timeout: 12), "Row menu button did not appear")
+        XCTAssertTrue(menuButton.waitForExistence(timeout: 12), "Detail screen menu did not appear")
         menuButton.tap()
 
         let editMenuItem = app.buttons["Edit"].exists ? app.buttons["Edit"] : app.menuItems["Edit"]
@@ -95,26 +102,22 @@ final class KeyringUITests: XCTestCase {
 
         app.buttons["saveKeyButton"].tap()
 
-        XCTAssertTrue(app.staticTexts["Back Door"].waitForExistence(timeout: 12), "Key edit did not apply")
+        XCTAssertTrue(app.navigationBars["Back Door"].waitForExistence(timeout: 12), "Key edit did not apply")
     }
 
-    func testDeleteKeyViaMenu() throws {
+    func testDeleteKeyViaDetailMenu() throws {
         let app = launchApp()
-        app.buttons["addKeyButton"].tap()
-        let labelField = app.textFields["keyLabelField"]
-        XCTAssertTrue(labelField.waitForExistence(timeout: 12))
-        labelField.tap()
-        labelField.typeText("Disposable Key")
-        app.buttons["saveKeyButton"].tap()
+        addKey(app, name: "Disposable Key")
 
         let row = app.staticTexts["Disposable Key"]
         XCTAssertTrue(row.waitForExistence(timeout: 12))
+        row.tap()
 
         let menuButton = app.buttons["keyMenu_Disposable Key"]
-        XCTAssertTrue(menuButton.waitForExistence(timeout: 12), "Row menu button did not appear")
+        XCTAssertTrue(menuButton.waitForExistence(timeout: 12), "Detail screen menu did not appear")
         menuButton.tap()
 
-        let deleteMenuItem = app.buttons["Delete"].exists ? app.buttons["Delete"] : app.menuItems["Delete"]
+        let deleteMenuItem = app.buttons["Delete Key"].exists ? app.buttons["Delete Key"] : app.menuItems["Delete Key"]
         XCTAssertTrue(deleteMenuItem.waitForExistence(timeout: 12), "Delete menu item did not appear")
         deleteMenuItem.tap()
 
@@ -122,11 +125,13 @@ final class KeyringUITests: XCTestCase {
         XCTAssertTrue(confirmButton.waitForExistence(timeout: 12), "Delete confirmation dialog did not appear")
         confirmButton.tap()
 
-        XCTAssertFalse(app.staticTexts["Disposable Key"].waitForExistence(timeout: 8), "Key was not deleted")
+        XCTAssertTrue(app.buttons["addKeyButton"].waitForExistence(timeout: 12), "Did not return to the key list")
+        XCTAssertFalse(app.staticTexts["Disposable Key"].exists, "Key was not deleted")
     }
 
     func testTapRingFansOutKeys() throws {
         let app = launchApp()
+        addKey(app, name: "Front Door")
         let ringButton = app.buttons["keyRingFanToggle"]
         let ringOther = app.otherElements["keyRingFanToggle"]
         let ring = ringButton.exists ? ringButton : ringOther
@@ -140,36 +145,19 @@ final class KeyringUITests: XCTestCase {
 
     func testFreeLimitTriggersPaywallAtSixthKey() throws {
         let app = launchApp()
-        // Seed data already has 2 keys; add 3 more to hit the free cap of 5, then try a 6th.
-        for name in ["Key A", "Key B", "Key C", "Key D"] {
-            let addButton = app.buttons["addKeyButton"]
-            if addButton.waitForExistence(timeout: 3) {
-                addButton.tap()
-                let labelField = app.textFields["keyLabelField"]
-                if labelField.waitForExistence(timeout: 3) {
-                    labelField.tap()
-                    labelField.typeText(name)
-                    app.buttons["saveKeyButton"].tap()
-                }
-            }
+        for name in ["Key A", "Key B", "Key C", "Key D", "Key E"] {
+            addKey(app, name: name)
         }
+        app.buttons["addKeyButton"].tap()
         XCTAssertTrue(app.staticTexts["Keyring Pro"].waitForExistence(timeout: 12), "Paywall did not appear after hitting the free key limit")
     }
 
     func testSimulatedPurchaseUnlocksUnlimitedKeys() throws {
         let app = launchApp()
-        for name in ["Key A", "Key B", "Key C", "Key D"] {
-            let addButton = app.buttons["addKeyButton"]
-            if addButton.waitForExistence(timeout: 3) {
-                addButton.tap()
-                let labelField = app.textFields["keyLabelField"]
-                if labelField.waitForExistence(timeout: 3) {
-                    labelField.tap()
-                    labelField.typeText(name)
-                    app.buttons["saveKeyButton"].tap()
-                }
-            }
+        for name in ["Key A", "Key B", "Key C", "Key D", "Key E"] {
+            addKey(app, name: name)
         }
+        app.buttons["addKeyButton"].tap()
         XCTAssertTrue(app.staticTexts["Keyring Pro"].waitForExistence(timeout: 12))
 
         let unlockButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Unlock'")).firstMatch
@@ -199,9 +187,15 @@ final class KeyringUITests: XCTestCase {
         let labelField = app.textFields["keyLabelField"]
         if labelField.waitForExistence(timeout: 8) {
             labelField.tap()
-            labelField.typeText("Key E")
+            labelField.typeText("Key F")
             app.buttons["saveKeyButton"].tap()
-            XCTAssertTrue(app.staticTexts["Key E"].waitForExistence(timeout: 12))
+            XCTAssertTrue(app.staticTexts["Key F"].waitForExistence(timeout: 12))
         }
+    }
+
+    func testSettingsSheetShowsUpgradeOption() throws {
+        let app = launchApp()
+        app.tabBars.buttons["Settings"].tap()
+        XCTAssertTrue(app.buttons["upgradeProButton"].waitForExistence(timeout: 12))
     }
 }

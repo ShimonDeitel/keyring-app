@@ -3,7 +3,7 @@ import SwiftUI
 struct RootTabView: View {
     var body: some View {
         TabView {
-            KeyringHomeView()
+            RootView()
                 .tabItem {
                     Label("Keys", systemImage: "key.fill")
                 }
@@ -22,10 +22,4 @@ struct RootTabView: View {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
     }
-}
-
-#Preview {
-    RootTabView()
-        .environmentObject(KeyringStore())
-        .environmentObject(PurchaseManager())
 }

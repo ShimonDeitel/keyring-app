@@ -7,20 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02927EB86C26A48501E89103 /* KeyringEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A107DEDE094600F67D3EAE /* KeyringEntity.swift */; };
 		0C2A906343159436BE2AD209 /* KeyringApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70D83FE11931A86AB0FED9ED /* KeyringApp.swift */; };
+		13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A02D7DE358F828380103BB /* KeyDetailView.swift */; };
+		1CE8F614917DB0906F839B2E /* KeyringStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8819FE514C4335BD7C9F450 /* KeyringStore.swift */; };
 		201099A2F9D357E4DC423F81 /* KeyringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */; };
-		2D8B479C778B13128825BCF1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE8F065BE396FA140B1220F /* SettingsView.swift */; };
-		2E2A7732D2EB76A227EF2094 /* KeyringStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA17EF9DE610C148851B68CC /* KeyringStore.swift */; };
-		3E29ADDAB3D3A73E1D9BC739 /* KeyringModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963648B4DAE7C3E7E07787BF /* KeyringModels.swift */; };
+		239CDEF1F6A0051B9D715969 /* KeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0013FF69E37140EF6AB74B9 /* KeyringDetailView.swift */; };
+		3026D3BB9EFA6017783B79E6 /* KeyFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D79866961E7740065EF137 /* KeyFormView.swift */; };
+		33F25798CA4488B6CB86ACED /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0294837165C8681A2103F /* PaywallView.swift */; };
+		36631D96EDF37C8BD97AE63C /* Date+Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8098937B704F84F21F03B8EF /* Date+Keyring.swift */; };
+		37D33D1AB2D5208C24DFD5AE /* KeyHistoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF379E683906A95AE9D7719 /* KeyHistoryRowView.swift */; };
+		3C62DBC1CFB000C7CC8B0A92 /* KeyringsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA62466220F72ED2CE20F8BB /* KeyringsListView.swift */; };
+		40E56BED3CD5C1DBC0F9709A /* PlanLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92530198F414F43FB63C643 /* PlanLimits.swift */; };
 		424FC0B06EF358915282E254 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B10CDBDB4262A7F38C91637 /* RootTabView.swift */; };
-		4FA903F49E1322515A192BD5 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8064D7612B51FAB60C3DC80E /* PaywallView.swift */; };
-		562ABD5166081477D6622F3B /* KeyringSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB847BC3649AF22056E9B934 /* KeyringSheets.swift */; };
+		4806F1D962D63728C02D62E5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 77A8625B31668810425D8C2A /* PrivacyInfo.xcprivacy */; };
+		486BB49A35D0CEE6CF143F32 /* KeyHistoryEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF206750D858C0483B83C90E /* KeyHistoryEntity.swift */; };
+		513A097ADC281F088B3958C6 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D57DEF171B4DA3354DDE742 /* LocationProvider.swift */; };
+		5A5975C1CF77C75EA58AB7FB /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2ADE74E08E7F649BF7E65B /* PurchaseManager.swift */; };
+		75EBC8CEE3BB39E071B710A7 /* KeyringRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B254000BF3E4BF774089A9 /* KeyringRowView.swift */; };
+		8AA71766B3CCAF934FBFA22F /* AddEditKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7B2377930AD9CCB3E09A5E /* AddEditKeyringView.swift */; };
+		A02C3BC58D7F94D52FAD59F2 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAA1CC9C19CFC398C878B65 /* PersistenceController.swift */; };
 		ACABB788A57FDA261A0B858F /* KeyringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C733BCAA6C40A06F5177AC /* KeyringTests.swift */; };
-		BB628F8F8C434B09640B9D9B /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A230757B1B0E70E29AF4B3D3 /* PurchaseManager.swift */; };
-		CE440A4901834B4507CB5659 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0E7D84952C98E73C8ABAD2 /* Theme.swift */; };
+		B4475AEE3BD42BAF484565BA /* KeyLocationEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853468DEE205316AE3860E2B /* KeyLocationEntity.swift */; };
+		C3629BA0327B59B4333BF3D7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7821A3C55D860D83BC23DD4 /* Theme.swift */; };
+		C613C139FC2F12F6EF8AB578 /* KeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7064CDD5FAF08A0ED0CACC1E /* KeyRepository.swift */; };
+		C6875C562B376EFC9E0DA796 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591264DFA641F8A660206946 /* RootView.swift */; };
+		CF0F50E92942A82E6D3F2576 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1659E56584599FC07D4A96 /* OnboardingView.swift */; };
+		D74CA84F27C342C4FE3F12BA /* ActivityLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F9EF58AE0326FC7183D7CDE /* ActivityLogView.swift */; };
+		D9CC9F60631366F1E6DD160B /* KeyPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDAE2FB62F180B7B4667724 /* KeyPhotoView.swift */; };
+		DA0F1080A74820EED3169A3C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1268AFF0E4654D267D3FC1 /* SettingsView.swift */; };
+		DAF537AF527ED5B21869D8A8 /* KeyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA76F20031DB9104513A0A2 /* KeyEntity.swift */; };
+		DC14E4AF81515D0BDD0A1609 /* KeyCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1725E49D7B7EFC98CE0AA4C /* KeyCategory.swift */; };
 		E020E18E738B22DCF8C89BB3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C85D8F12124333F184EE41A5 /* Assets.xcassets */; };
+		E05E4C3ACAAA5CCC71AE53FC /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CA5C4CFEA33E4D2ED7D535 /* EmptyStateView.swift */; };
 		E4A6D35592DE53581DB261A2 /* Keyring.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDABAEB546636250EC696E /* Keyring.storekit */; };
-		EB56D79F6EDD3C201B84A7E6 /* KeyringHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54453690FB202191EAF52218 /* KeyringHomeView.swift */; };
+		E73D9687009BB6500E6C9788 /* LegacyDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB732AD02F568A8F0E2E161 /* LegacyDataMigrator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,43 +63,120 @@
 
 /* Begin PBXFileReference section */
 		049C35EE86FF0F5A6866752B /* KeyringTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KeyringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FC0294837165C8681A2103F /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		20C733BCAA6C40A06F5177AC /* KeyringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTests.swift; sourceTree = "<group>"; };
 		22F0A823586D00837CA297CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		54453690FB202191EAF52218 /* KeyringHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringHomeView.swift; sourceTree = "<group>"; };
-		5D0E7D84952C98E73C8ABAD2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		2DF379E683906A95AE9D7719 /* KeyHistoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyHistoryRowView.swift; sourceTree = "<group>"; };
+		31A02D7DE358F828380103BB /* KeyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDetailView.swift; sourceTree = "<group>"; };
+		51A107DEDE094600F67D3EAE /* KeyringEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringEntity.swift; sourceTree = "<group>"; };
+		591264DFA641F8A660206946 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		5D7B2377930AD9CCB3E09A5E /* AddEditKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditKeyringView.swift; sourceTree = "<group>"; };
+		65D79866961E7740065EF137 /* KeyFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyFormView.swift; sourceTree = "<group>"; };
+		6D57DEF171B4DA3354DDE742 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		6DDAE2FB62F180B7B4667724 /* KeyPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPhotoView.swift; sourceTree = "<group>"; };
+		7064CDD5FAF08A0ED0CACC1E /* KeyRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyRepository.swift; sourceTree = "<group>"; };
 		7096665CFD4F81715C8A31D3 /* Keyring.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Keyring.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70D83FE11931A86AB0FED9ED /* KeyringApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringApp.swift; sourceTree = "<group>"; };
-		8064D7612B51FAB60C3DC80E /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		74CA5C4CFEA33E4D2ED7D535 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		77A8625B31668810425D8C2A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		7BB732AD02F568A8F0E2E161 /* LegacyDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDataMigrator.swift; sourceTree = "<group>"; };
+		7F9EF58AE0326FC7183D7CDE /* ActivityLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogView.swift; sourceTree = "<group>"; };
+		8098937B704F84F21F03B8EF /* Date+Keyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Keyring.swift"; sourceTree = "<group>"; };
+		853468DEE205316AE3860E2B /* KeyLocationEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyLocationEntity.swift; sourceTree = "<group>"; };
 		8B10CDBDB4262A7F38C91637 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		8BCDABAEB546636250EC696E /* Keyring.storekit */ = {isa = PBXFileReference; path = Keyring.storekit; sourceTree = "<group>"; };
-		8DE8F065BE396FA140B1220F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		963648B4DAE7C3E7E07787BF /* KeyringModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringModels.swift; sourceTree = "<group>"; };
+		99B254000BF3E4BF774089A9 /* KeyringRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringRowView.swift; sourceTree = "<group>"; };
+		9B1659E56584599FC07D4A96 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9CB9A79F10A6AE732C1558DC /* KeyringUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KeyringUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A230757B1B0E70E29AF4B3D3 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
-		AA17EF9DE610C148851B68CC /* KeyringStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringStore.swift; sourceTree = "<group>"; };
+		9EA76F20031DB9104513A0A2 /* KeyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEntity.swift; sourceTree = "<group>"; };
+		A7821A3C55D860D83BC23DD4 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		AA62466220F72ED2CE20F8BB /* KeyringsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringsListView.swift; sourceTree = "<group>"; };
+		C1725E49D7B7EFC98CE0AA4C /* KeyCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCategory.swift; sourceTree = "<group>"; };
 		C85D8F12124333F184EE41A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C92530198F414F43FB63C643 /* PlanLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLimits.swift; sourceTree = "<group>"; };
+		CA2ADE74E08E7F649BF7E65B /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		D0013FF69E37140EF6AB74B9 /* KeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringDetailView.swift; sourceTree = "<group>"; };
+		DB1268AFF0E4654D267D3FC1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		DF206750D858C0483B83C90E /* KeyHistoryEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyHistoryEntity.swift; sourceTree = "<group>"; };
 		E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringUITests.swift; sourceTree = "<group>"; };
-		FB847BC3649AF22056E9B934 /* KeyringSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringSheets.swift; sourceTree = "<group>"; };
+		EBAA1CC9C19CFC398C878B65 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		F8819FE514C4335BD7C9F450 /* KeyringStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		04D6201D1C8F3C2602CCD1C0 /* Integrations */ = {
+			isa = PBXGroup;
+			children = (
+				BEE39F755C74D13BBA3071AA /* Location */,
+				EF33DAEDFE4ADE2FD26C3098 /* StoreKit */,
+			);
+			path = Integrations;
+			sourceTree = "<group>";
+		};
+		191F5E64B7B88F92833FDF1C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C1725E49D7B7EFC98CE0AA4C /* KeyCategory.swift */,
+				9EA76F20031DB9104513A0A2 /* KeyEntity.swift */,
+				DF206750D858C0483B83C90E /* KeyHistoryEntity.swift */,
+				853468DEE205316AE3860E2B /* KeyLocationEntity.swift */,
+				51A107DEDE094600F67D3EAE /* KeyringEntity.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		293D2F9A6FCB5CD47544FC32 /* Keyring */ = {
 			isa = PBXGroup;
 			children = (
+				3BF61E60738CCCBE4A0711CD /* Core */,
+				BEEBB243E467964A7D49AB19 /* Features */,
+				04D6201D1C8F3C2602CCD1C0 /* Integrations */,
+				A63E4E383A18F4EDD09B89E4 /* UI */,
 				C85D8F12124333F184EE41A5 /* Assets.xcassets */,
 				22F0A823586D00837CA297CC /* Info.plist */,
 				70D83FE11931A86AB0FED9ED /* KeyringApp.swift */,
-				54453690FB202191EAF52218 /* KeyringHomeView.swift */,
-				963648B4DAE7C3E7E07787BF /* KeyringModels.swift */,
-				FB847BC3649AF22056E9B934 /* KeyringSheets.swift */,
-				AA17EF9DE610C148851B68CC /* KeyringStore.swift */,
-				8064D7612B51FAB60C3DC80E /* PaywallView.swift */,
-				A230757B1B0E70E29AF4B3D3 /* PurchaseManager.swift */,
+				77A8625B31668810425D8C2A /* PrivacyInfo.xcprivacy */,
 				8B10CDBDB4262A7F38C91637 /* RootTabView.swift */,
-				8DE8F065BE396FA140B1220F /* SettingsView.swift */,
-				5D0E7D84952C98E73C8ABAD2 /* Theme.swift */,
 			);
 			path = Keyring;
+			sourceTree = "<group>";
+		};
+		3BF61E60738CCCBE4A0711CD /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C8A41A3A341BB71B7DBADD16 /* Entitlements */,
+				191F5E64B7B88F92833FDF1C /* Models */,
+				EB6D7A74B56FBAAB452C3538 /* Persistence */,
+				45EC934FCDCBFF84CCBB7546 /* Services */,
+				70EDC59FE621515AF635BC80 /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		44B797CCC93C147A4B69A2CD /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				9B1659E56584599FC07D4A96 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		45EC934FCDCBFF84CCBB7546 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				7064CDD5FAF08A0ED0CACC1E /* KeyRepository.swift */,
+				F8819FE514C4335BD7C9F450 /* KeyringStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		53620909D31F85AE9A2B5D46 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				7F9EF58AE0326FC7183D7CDE /* ActivityLogView.swift */,
+				2DF379E683906A95AE9D7719 /* KeyHistoryRowView.swift */,
+			);
+			path = History;
 			sourceTree = "<group>";
 		};
 		5E62D321B36259F53C59AEB8 /* Products */ = {
@@ -89,6 +187,32 @@
 				9CB9A79F10A6AE732C1558DC /* KeyringUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6E0D3954AB1886170AC54C87 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				74CA5C4CFEA33E4D2ED7D535 /* EmptyStateView.swift */,
+				6DDAE2FB62F180B7B4667724 /* KeyPhotoView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		70EDC59FE621515AF635BC80 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				8098937B704F84F21F03B8EF /* Date+Keyring.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		84DEB47D07CDA429A1DA81E9 /* Keys */ = {
+			isa = PBXGroup;
+			children = (
+				31A02D7DE358F828380103BB /* KeyDetailView.swift */,
+				65D79866961E7740065EF137 /* KeyFormView.swift */,
+			);
+			path = Keys;
 			sourceTree = "<group>";
 		};
 		86C9127B1825C16FEF6C68CA = {
@@ -110,12 +234,103 @@
 			path = KeyringTests;
 			sourceTree = "<group>";
 		};
+		A5678B55BCB254415D707197 /* Paywall */ = {
+			isa = PBXGroup;
+			children = (
+				0FC0294837165C8681A2103F /* PaywallView.swift */,
+			);
+			path = Paywall;
+			sourceTree = "<group>";
+		};
+		A63E4E383A18F4EDD09B89E4 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				6E0D3954AB1886170AC54C87 /* Components */,
+				DAC45A611E0B096FE71CAB72 /* DesignSystem */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		BEE39F755C74D13BBA3071AA /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				6D57DEF171B4DA3354DDE742 /* LocationProvider.swift */,
+			);
+			path = Location;
+			sourceTree = "<group>";
+		};
+		BEEBB243E467964A7D49AB19 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				53620909D31F85AE9A2B5D46 /* History */,
+				E32DCA4B8BBE582E6BF20053 /* Keyrings */,
+				84DEB47D07CDA429A1DA81E9 /* Keys */,
+				44B797CCC93C147A4B69A2CD /* Onboarding */,
+				A5678B55BCB254415D707197 /* Paywall */,
+				F861E69D42124A85574E34D2 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		C8A41A3A341BB71B7DBADD16 /* Entitlements */ = {
+			isa = PBXGroup;
+			children = (
+				C92530198F414F43FB63C643 /* PlanLimits.swift */,
+			);
+			path = Entitlements;
+			sourceTree = "<group>";
+		};
+		DAC45A611E0B096FE71CAB72 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				A7821A3C55D860D83BC23DD4 /* Theme.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		E32DCA4B8BBE582E6BF20053 /* Keyrings */ = {
+			isa = PBXGroup;
+			children = (
+				5D7B2377930AD9CCB3E09A5E /* AddEditKeyringView.swift */,
+				D0013FF69E37140EF6AB74B9 /* KeyringDetailView.swift */,
+				99B254000BF3E4BF774089A9 /* KeyringRowView.swift */,
+				AA62466220F72ED2CE20F8BB /* KeyringsListView.swift */,
+				591264DFA641F8A660206946 /* RootView.swift */,
+			);
+			path = Keyrings;
+			sourceTree = "<group>";
+		};
 		E6F55377D0965B7DBF58BA05 /* KeyringUITests */ = {
 			isa = PBXGroup;
 			children = (
 				E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */,
 			);
 			path = KeyringUITests;
+			sourceTree = "<group>";
+		};
+		EB6D7A74B56FBAAB452C3538 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				7BB732AD02F568A8F0E2E161 /* LegacyDataMigrator.swift */,
+				EBAA1CC9C19CFC398C878B65 /* PersistenceController.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		EF33DAEDFE4ADE2FD26C3098 /* StoreKit */ = {
+			isa = PBXGroup;
+			children = (
+				CA2ADE74E08E7F649BF7E65B /* PurchaseManager.swift */,
+			);
+			path = StoreKit;
+			sourceTree = "<group>";
+		};
+		F861E69D42124A85574E34D2 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				DB1268AFF0E4654D267D3FC1 /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +450,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E020E18E738B22DCF8C89BB3 /* Assets.xcassets in Resources */,
+				4806F1D962D63728C02D62E5 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,16 +461,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D74CA84F27C342C4FE3F12BA /* ActivityLogView.swift in Sources */,
+				8AA71766B3CCAF934FBFA22F /* AddEditKeyringView.swift in Sources */,
+				36631D96EDF37C8BD97AE63C /* Date+Keyring.swift in Sources */,
+				E05E4C3ACAAA5CCC71AE53FC /* EmptyStateView.swift in Sources */,
+				DC14E4AF81515D0BDD0A1609 /* KeyCategory.swift in Sources */,
+				13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */,
+				DAF537AF527ED5B21869D8A8 /* KeyEntity.swift in Sources */,
+				3026D3BB9EFA6017783B79E6 /* KeyFormView.swift in Sources */,
+				486BB49A35D0CEE6CF143F32 /* KeyHistoryEntity.swift in Sources */,
+				37D33D1AB2D5208C24DFD5AE /* KeyHistoryRowView.swift in Sources */,
+				B4475AEE3BD42BAF484565BA /* KeyLocationEntity.swift in Sources */,
+				D9CC9F60631366F1E6DD160B /* KeyPhotoView.swift in Sources */,
+				C613C139FC2F12F6EF8AB578 /* KeyRepository.swift in Sources */,
 				0C2A906343159436BE2AD209 /* KeyringApp.swift in Sources */,
-				EB56D79F6EDD3C201B84A7E6 /* KeyringHomeView.swift in Sources */,
-				3E29ADDAB3D3A73E1D9BC739 /* KeyringModels.swift in Sources */,
-				562ABD5166081477D6622F3B /* KeyringSheets.swift in Sources */,
-				2E2A7732D2EB76A227EF2094 /* KeyringStore.swift in Sources */,
-				4FA903F49E1322515A192BD5 /* PaywallView.swift in Sources */,
-				BB628F8F8C434B09640B9D9B /* PurchaseManager.swift in Sources */,
+				239CDEF1F6A0051B9D715969 /* KeyringDetailView.swift in Sources */,
+				02927EB86C26A48501E89103 /* KeyringEntity.swift in Sources */,
+				75EBC8CEE3BB39E071B710A7 /* KeyringRowView.swift in Sources */,
+				1CE8F614917DB0906F839B2E /* KeyringStore.swift in Sources */,
+				3C62DBC1CFB000C7CC8B0A92 /* KeyringsListView.swift in Sources */,
+				E73D9687009BB6500E6C9788 /* LegacyDataMigrator.swift in Sources */,
+				513A097ADC281F088B3958C6 /* LocationProvider.swift in Sources */,
+				CF0F50E92942A82E6D3F2576 /* OnboardingView.swift in Sources */,
+				33F25798CA4488B6CB86ACED /* PaywallView.swift in Sources */,
+				A02C3BC58D7F94D52FAD59F2 /* PersistenceController.swift in Sources */,
+				40E56BED3CD5C1DBC0F9709A /* PlanLimits.swift in Sources */,
+				5A5975C1CF77C75EA58AB7FB /* PurchaseManager.swift in Sources */,
 				424FC0B06EF358915282E254 /* RootTabView.swift in Sources */,
-				2D8B479C778B13128825BCF1 /* SettingsView.swift in Sources */,
-				CE440A4901834B4507CB5659 /* Theme.swift in Sources */,
+				C6875C562B376EFC9E0DA796 /* RootView.swift in Sources */,
+				DA0F1080A74820EED3169A3C /* SettingsView.swift in Sources */,
+				C3629BA0327B59B4333BF3D7 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

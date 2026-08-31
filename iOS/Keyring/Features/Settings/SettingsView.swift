@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject private var store: KeyringStore
-    @EnvironmentObject private var purchases: PurchaseManager
+    @Environment(KeyringStore.self) private var store
+    @Environment(PurchaseManager.self) private var purchases
     @AppStorage("keyring_start_fanned") private var startFanned: Bool = false
     @State private var activeSheet: KeyringSheet?
     @State private var showResetConfirm = false
@@ -41,13 +41,33 @@ struct SettingsView: View {
                     }
                 }
 
+                if store.isPro {
+                    Section("Pro") {
+                        NavigationLink {
+                            ActivityLogView()
+                        } label: {
+                            Label("Activity Log", systemImage: "clock.arrow.circlepath")
+                        }
+                    }
+                } else if let onlyRing = store.keyrings.first {
+                    Section("This Keyring") {
+                        Button {
+                            activeSheet = .editKeyring
+                        } label: {
+                            Label("Rename \"\(onlyRing.name)\"", systemImage: "pencil")
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .id(onlyRing.id)
+                }
+
                 Section("About") {
                     Link("Privacy Policy", destination: URL(string: "https://shimondeitel.github.io/keyring-site/privacy.html")!)
                     Link("Contact Support", destination: URL(string: "mailto:s0533495227@gmail.com")!)
                     HStack {
                         Text("Version")
                         Spacer()
-                        Text("1.0")
+                        Text(Bundle.main.appVersionDisplay)
                             .foregroundStyle(KRTheme.inkFaded)
                     }
                 }
@@ -66,7 +86,8 @@ struct SettingsView: View {
                 titleVisibility: .visible
             ) {
                 Button("Reset", role: .destructive) {
-                    store.deleteAllData()
+                    for ring in store.keyrings { store.deleteKeyring(ring) }
+                    store.createKeyring(name: "My Keys", icon: "key.fill", locationName: nil)
                 }
                 Button("Cancel", role: .cancel) {}
             }
@@ -74,7 +95,13 @@ struct SettingsView: View {
                 switch sheet {
                 case .paywall:
                     PaywallView()
-                default:
+                case .editKeyring:
+                    if let onlyRing = store.keyrings.first {
+                        AddEditKeyringView(existing: onlyRing) { name, icon, location in
+                            store.renameKeyring(onlyRing, name: name, icon: icon, locationName: location)
+                        }
+                    }
+                case .add:
                     EmptyView()
                 }
             }
@@ -82,8 +109,10 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
-    SettingsView()
-        .environmentObject(KeyringStore())
-        .environmentObject(PurchaseManager())
+extension Bundle {
+    var appVersionDisplay: String {
+        let version = infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
+    }
 }

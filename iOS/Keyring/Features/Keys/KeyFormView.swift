@@ -1,36 +1,29 @@
 import SwiftUI
 import PhotosUI
 
-enum KeyringSheet: Identifiable {
-    case add
-    case edit(KeyItem)
-    case paywall
-
-    var id: String {
-        switch self {
-        case .add: return "add"
-        case .edit(let k): return "edit-\(k.id)"
-        case .paywall: return "paywall"
-        }
-    }
-}
-
 struct KeyFormView: View {
-    @EnvironmentObject private var store: KeyringStore
-    @EnvironmentObject private var purchases: PurchaseManager
+    @Environment(KeyringStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
-    let existing: KeyItem?
+    let keyring: KeyringEntity
+    let existing: KeyEntity?
 
-    @State private var label: String
-    @State private var note: String
+    @State private var name: String
+    @State private var opens: String
+    @State private var category: KeyCategory
+    @State private var notes: String
+    @State private var assignedLocationName: String
     @State private var pickerItem: PhotosPickerItem?
     @State private var photoData: Data?
 
-    init(existing: KeyItem?) {
+    init(keyring: KeyringEntity, existing: KeyEntity?) {
+        self.keyring = keyring
         self.existing = existing
-        _label = State(initialValue: existing?.label ?? "")
-        _note = State(initialValue: existing?.note ?? "")
+        _name = State(initialValue: existing?.name ?? "")
+        _opens = State(initialValue: existing?.opens ?? "")
+        _category = State(initialValue: existing?.category ?? .other)
+        _notes = State(initialValue: existing?.notes ?? "")
+        _assignedLocationName = State(initialValue: existing?.assignedLocationName ?? "")
         _photoData = State(initialValue: existing?.photoData)
     }
 
@@ -40,26 +33,25 @@ struct KeyFormView: View {
         NavigationStack {
             Form {
                 Section("Key") {
-                    TextField("What does this key open? (e.g. Front Door)", text: $label)
+                    TextField("What does this key open? (e.g. Front Door)", text: $name)
                         .accessibilityIdentifier("keyLabelField")
-                    TextField("Note (e.g. brass, top of the ring)", text: $note)
+                    Picker("Category", selection: $category) {
+                        ForEach(KeyCategory.allCases) { cat in
+                            Label(cat.displayName, systemImage: cat.symbolName).tag(cat)
+                        }
+                    }
+                    TextField("Note (e.g. brass, top of the ring)", text: $notes)
                         .accessibilityIdentifier("keyNoteField")
+                }
+
+                Section("Where is it normally kept?") {
+                    TextField("Optional, e.g. Kitchen drawer", text: $assignedLocationName)
                 }
 
                 Section("Photo") {
                     PhotosPicker(selection: $pickerItem, matching: .images) {
                         HStack {
-                            if let photoData, let uiImage = UIImage(data: photoData) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 44, height: 44)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                            } else {
-                                Image(systemName: "key")
-                                    .foregroundStyle(KRTheme.brass)
-                                    .frame(width: 44, height: 44)
-                            }
+                            KeyPhotoView(photoData: photoData, symbolName: category.symbolName, size: 44)
                             Text(photoData != nil ? "Photo added" : "Add a photo of this key")
                                 .foregroundStyle(KRTheme.ink)
                         }
@@ -71,9 +63,7 @@ struct KeyFormView: View {
                 if isEditing {
                     Section {
                         Button("Delete Key", role: .destructive) {
-                            if let existing {
-                                store.deleteKey(existing.id)
-                            }
+                            if let existing { store.deleteKey(existing) }
                             dismiss()
                         }
                         .buttonStyle(.plain)
@@ -86,13 +76,12 @@ struct KeyFormView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .buttonStyle(.plain)
+                    Button("Cancel") { dismiss() }.buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
                         .buttonStyle(.plain)
-                        .disabled(label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         .accessibilityIdentifier("saveKeyButton")
                 }
             }
@@ -107,13 +96,14 @@ struct KeyFormView: View {
     }
 
     private func save() {
-        guard !label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let locationName = assignedLocationName.trimmingCharacters(in: .whitespaces).isEmpty ? nil : assignedLocationName
         if let existing {
-            store.updateKey(existing.id, label: label, note: note, photoData: photoData)
+            store.updateKey(existing, name: name, photoData: photoData, keyDescription: existing.keyDescription, opens: opens, category: category, notes: notes, assignedLocationName: locationName)
             dismiss()
         } else {
-            guard store.canAddKey(isPro: purchases.isPro) else { return }
-            store.addKey(label: label, note: note, photoData: photoData, isPro: purchases.isPro)
+            guard store.canAddKey(to: keyring) else { return }
+            store.addKey(to: keyring, name: name, photoData: photoData, keyDescription: "", opens: opens, category: category, notes: notes, assignedLocationName: locationName)
             dismiss()
         }
     }

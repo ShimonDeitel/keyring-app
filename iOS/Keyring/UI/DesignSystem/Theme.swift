@@ -17,6 +17,22 @@ enum KRTheme {
 
     static let titleFont = Font.system(.title2, design: .rounded).weight(.bold)
     static let headlineFont = Font.system(.headline, design: .rounded).weight(.semibold)
+
+    // Status colors for loan/spare/lost badges, added for Phase 2.
+    static let loanedColor = brassBright
+    static let lostColor = danger
+    static let spareColor = Color(red: 0.318, green: 0.451, blue: 0.573)
+
+    static let cardCorner: CGFloat = 16
+    static let smallCorner: CGFloat = 10
+
+    enum Spacing {
+        static let xs: CGFloat = 4
+        static let sm: CGFloat = 8
+        static let md: CGFloat = 16
+        static let lg: CGFloat = 24
+        static let xl: CGFloat = 32
+    }
 }
 
 struct DismissKeyboardOnTap: ViewModifier {

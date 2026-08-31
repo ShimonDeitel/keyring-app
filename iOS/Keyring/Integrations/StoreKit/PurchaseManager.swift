@@ -1,14 +1,18 @@
 import Foundation
 import StoreKit
+import Observation
 
 @MainActor
-final class PurchaseManager: ObservableObject {
+@Observable
+final class PurchaseManager: EntitlementProviding {
     static let proProductID = "keyring_pro_unlock"
 
-    @Published private(set) var isPro = false
-    @Published private(set) var product: Product?
+    private(set) var isPurchased = false
+    private(set) var product: Product?
 
-    private var updatesTask: Task<Void, Never>?
+    var isPro: Bool { isPurchased }
+
+    private nonisolated(unsafe) var updatesTask: Task<Void, Never>?
 
     init() {
         updatesTask = Task { [weak self] in
@@ -26,9 +30,7 @@ final class PurchaseManager: ObservableObject {
         }
     }
 
-    deinit {
-        updatesTask?.cancel()
-    }
+    deinit { updatesTask?.cancel() }
 
     func loadProduct() async {
         do {
@@ -64,6 +66,6 @@ final class PurchaseManager: ObservableObject {
                 owned = true
             }
         }
-        isPro = owned
+        isPurchased = owned
     }
 }
