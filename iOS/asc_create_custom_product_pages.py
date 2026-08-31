@@ -110,8 +110,9 @@ def create_page(token, page):
     # it needs the version and localization created in the SAME request as a JSON:API
     # compound document (an "included" array with temporary reference ids), not as
     # separate follow-up POSTs. Confirmed against the real API, not just the spec example.
-    version_lid = "tmp-version"
-    loc_lid = "tmp-localization"
+    # Apple requires inline-create ids in the literal "${local-id}" format.
+    version_lid = "${tmp-version}"
+    loc_lid = "${tmp-localization}"
     _, body = req("POST", "/appCustomProductPages", token, {
         "data": {
             "type": "appCustomProductPages",
