@@ -67,6 +67,17 @@ def main():
     version_id = pending[0]["id"]
     print(f"Target version: {version_id} ({pending[0]['attributes']['versionString']})")
 
+    # Apple rejects the submission until the attached build declares its
+    # export-compliance status. Info.plist now sets this for future builds
+    # (ITSAppUsesNonExemptEncryption); patch the already-uploaded build too.
+    _, build_body = req("GET", f"/appStoreVersions/{version_id}/build", token)
+    if build_body.get("data"):
+        build_id = build_body["data"]["id"]
+        req("PATCH", f"/builds/{build_id}", token, {
+            "data": {"type": "builds", "id": build_id, "attributes": {"usesNonExemptEncryption": False}}
+        })
+        print(f"Set usesNonExemptEncryption=false on build {build_id}")
+
     _, existing = req("GET", f"/apps/{APP_ID}/reviewSubmissions", token)
     open_submission = next((s for s in existing["data"] if s["attributes"].get("state") in OPEN_STATES), None)
 
@@ -84,6 +95,10 @@ def main():
         submission_id = body["data"]["id"]
         print(f"Created review submission: {submission_id}")
 
+    _, items_body = req("GET", f"/reviewSubmissions/{submission_id}/items", token)
+    if items_body["data"]:
+        print(f"Submission already has {len(items_body['data'])} item(s) attached")
+    else:
         _, body = req("POST", "/reviewSubmissionItems", token, {
             "data": {
                 "type": "reviewSubmissionItems",
