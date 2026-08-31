@@ -26,6 +26,16 @@ PROMOTIONAL_TEXT = (
     "New in 2.0: loan tracking, location confirmation with maps, on-device "
     "duplicate detection, full activity history, and Siri Shortcuts support."
 )
+WHATS_NEW = """Keyring 2.0 is a big update:
+- Loan tracking -- mark a key loaned, see who has it, get an activity trail when it's returned
+- Location confirmation -- log where you last saw a key, with a map
+- On-device duplicate detection when you photograph a new key
+- Full activity history for every key
+- Siri Shortcuts and Spotlight search
+- A cleaner keyring detail screen and paywall
+
+Thanks for using Keyring -- keep the feedback coming."""
+
 DESCRIPTION = """Stop wondering what that mystery key opens. Keyring lets you photograph and label every key so you always know which is which -- then tap the ring to fan them out for quick browsing.
 
 NEW IN 2.0
@@ -198,6 +208,7 @@ def main():
                     "description": DESCRIPTION,
                     "keywords": KEYWORDS,
                     "promotionalText": PROMOTIONAL_TEXT,
+                    "whatsNew": WHATS_NEW,
                 },
             }
         },
