@@ -32,6 +32,7 @@
 		A6762AC2E282BB5E93D77D4A /* KeyringIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC0422F65BB4C7BB1D46BD0 /* KeyringIntents.swift */; };
 		ACABB788A57FDA261A0B858F /* KeyringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C733BCAA6C40A06F5177AC /* KeyringTests.swift */; };
 		B4475AEE3BD42BAF484565BA /* KeyLocationEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853468DEE205316AE3860E2B /* KeyLocationEntity.swift */; };
+		C185F7CAAB50CC822239834B /* KeyringScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FD4DA73CFFE5A31FDEBC55E /* KeyringScreenshotTests.swift */; };
 		C3629BA0327B59B4333BF3D7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7821A3C55D860D83BC23DD4 /* Theme.swift */; };
 		C613C139FC2F12F6EF8AB578 /* KeyRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7064CDD5FAF08A0ED0CACC1E /* KeyRepository.swift */; };
 		C6875C562B376EFC9E0DA796 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591264DFA641F8A660206946 /* RootView.swift */; };
@@ -88,6 +89,7 @@
 		77A8625B31668810425D8C2A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		7BB732AD02F568A8F0E2E161 /* LegacyDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDataMigrator.swift; sourceTree = "<group>"; };
 		7F9EF58AE0326FC7183D7CDE /* ActivityLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogView.swift; sourceTree = "<group>"; };
+		7FD4DA73CFFE5A31FDEBC55E /* KeyringScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringScreenshotTests.swift; sourceTree = "<group>"; };
 		8098937B704F84F21F03B8EF /* Date+Keyring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Keyring.swift"; sourceTree = "<group>"; };
 		853468DEE205316AE3860E2B /* KeyLocationEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyLocationEntity.swift; sourceTree = "<group>"; };
 		8B10CDBDB4262A7F38C91637 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
@@ -323,6 +325,7 @@
 		E6F55377D0965B7DBF58BA05 /* KeyringUITests */ = {
 			isa = PBXGroup;
 			children = (
+				7FD4DA73CFFE5A31FDEBC55E /* KeyringScreenshotTests.swift */,
 				E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */,
 			);
 			path = KeyringUITests;
@@ -538,6 +541,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C185F7CAAB50CC822239834B /* KeyringScreenshotTests.swift in Sources */,
 				201099A2F9D357E4DC423F81 /* KeyringUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

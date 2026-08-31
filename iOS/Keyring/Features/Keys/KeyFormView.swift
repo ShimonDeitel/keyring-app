@@ -78,7 +78,12 @@ struct KeyFormView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }.buttonStyle(.plain)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .accessibilityLabel("Cancel")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
@@ -87,11 +92,11 @@ struct KeyFormView: View {
                         if isCheckingDuplicates {
                             ProgressView()
                         } else {
-                            Text("Save")
+                            Image(systemName: "checkmark")
                         }
                     }
-                    .buttonStyle(.plain)
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isCheckingDuplicates)
+                    .accessibilityLabel("Save")
                     .accessibilityIdentifier("saveKeyButton")
                 }
             }

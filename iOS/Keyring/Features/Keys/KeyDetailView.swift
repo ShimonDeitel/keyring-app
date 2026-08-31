@@ -379,15 +379,22 @@ private struct LoanKeySheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }.buttonStyle(.plain)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .accessibilityLabel("Cancel")
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button {
                         onSave(person, hasExpectedReturn ? expectedReturn : nil)
                         dismiss()
+                    } label: {
+                        Image(systemName: "checkmark")
                     }
-                    .buttonStyle(.plain)
                     .disabled(person.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .accessibilityLabel("Save")
                     .accessibilityIdentifier("saveLoanButton")
                 }
             }

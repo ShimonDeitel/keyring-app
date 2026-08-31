@@ -84,9 +84,13 @@ struct PaywallView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(KRTheme.ink)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .foregroundStyle(KRTheme.ink)
+                    .accessibilityLabel("Close")
                 }
             }
         }

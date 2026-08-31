@@ -56,15 +56,22 @@ struct AddEditKeyringView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }.buttonStyle(.plain)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .accessibilityLabel("Cancel")
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button {
                         onSave(name, icon, locationName.trimmingCharacters(in: .whitespaces).isEmpty ? nil : locationName)
                         dismiss()
+                    } label: {
+                        Image(systemName: "checkmark")
                     }
-                    .buttonStyle(.plain)
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .accessibilityLabel("Save")
                     .accessibilityIdentifier("saveKeyringButton")
                 }
             }
