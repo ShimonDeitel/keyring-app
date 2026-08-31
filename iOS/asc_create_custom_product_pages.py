@@ -106,26 +106,45 @@ def upload_screenshots(token, set_id, files):
 def create_page(token, page):
     print(f"Creating custom product page: {page['name']}")
 
+    # The live API rejects a bare page POST with 409 ENTITY_ERROR.RELATIONSHIP.REQUIRED --
+    # it needs the version and localization created in the SAME request as a JSON:API
+    # compound document (an "included" array with temporary reference ids), not as
+    # separate follow-up POSTs. Confirmed against the real API, not just the spec example.
+    version_lid = "tmp-version"
+    loc_lid = "tmp-localization"
     _, body = req("POST", "/appCustomProductPages", token, {
-        "data": {"type": "appCustomProductPages", "attributes": {"name": page["name"]},
-                 "relationships": {"app": {"data": {"type": "apps", "id": APP_ID}}}}
+        "data": {
+            "type": "appCustomProductPages",
+            "attributes": {"name": page["name"]},
+            "relationships": {
+                "app": {"data": {"type": "apps", "id": APP_ID}},
+                "appCustomProductPageVersions": {"data": [{"type": "appCustomProductPageVersions", "id": version_lid}]},
+            },
+        },
+        "included": [
+            {
+                "type": "appCustomProductPageVersions",
+                "id": version_lid,
+                "relationships": {
+                    "appCustomProductPageLocalizations": {"data": [{"type": "appCustomProductPageLocalizations", "id": loc_lid}]}
+                },
+            },
+            {
+                "type": "appCustomProductPageLocalizations",
+                "id": loc_lid,
+                "attributes": {"locale": "en-US", "promotionalText": page["promotionalText"]},
+            },
+        ],
     })
     page_id = body["data"]["id"]
     print(f"  page: {page_id}")
 
-    _, body = req("POST", "/appCustomProductPageVersions", token, {
-        "data": {"type": "appCustomProductPageVersions",
-                 "relationships": {"appCustomProductPage": {"data": {"type": "appCustomProductPages", "id": page_id}}}}
-    })
-    version_id = body["data"]["id"]
+    _, vbody = req("GET", f"/appCustomProductPages/{page_id}/appCustomProductPageVersions", token)
+    version_id = vbody["data"][0]["id"]
     print(f"  version: {version_id}")
 
-    _, body = req("POST", "/appCustomProductPageLocalizations", token, {
-        "data": {"type": "appCustomProductPageLocalizations",
-                 "attributes": {"locale": "en-US", "promotionalText": page["promotionalText"]},
-                 "relationships": {"appCustomProductPageVersion": {"data": {"type": "appCustomProductPageVersions", "id": version_id}}}}
-    })
-    loc_id = body["data"]["id"]
+    _, lbody = req("GET", f"/appCustomProductPageVersions/{version_id}/appCustomProductPageLocalizations", token)
+    loc_id = lbody["data"][0]["id"]
     print(f"  localization: {loc_id}")
 
     _, body = req("POST", "/appScreenshotSets", token, {
