@@ -150,7 +150,7 @@ def main():
         # altool uploads land in /builds but are never auto-selected onto a
         # version -- list every build for the app and, once one has finished
         # processing, attach the newest.
-        status, builds_body = req("GET", f"/apps/{APP_ID}/builds?sort=-uploadedDate&limit=10", token)
+        status, builds_body = req("GET", f"/builds?filter[app]={APP_ID}&sort=-uploadedDate&limit=10", token)
         for b in builds_body["data"]:
             a = b["attributes"]
             print(f"build {b['id']}: version={a.get('version')} processingState={a.get('processingState')} uploadedDate={a.get('uploadedDate')}")
