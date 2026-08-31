@@ -131,6 +131,28 @@ def main():
     version_id = version["id"]
     print(f"Using editable version: {version['attributes']['versionString']} ({version_id})")
 
+    # Check what build (if any) is actually attached -- the appStoreVersion's
+    # own versionString doesn't auto-follow an uploaded build's
+    # CFBundleShortVersionString, so it can lag behind what altool uploaded.
+    try:
+        status, build_body = req("GET", f"/appStoreVersions/{version_id}/build", token)
+        build_data = build_body.get("data")
+        if build_data:
+            print(f"Attached build: {build_data.get('id')}")
+        else:
+            print("No build attached to this appStoreVersion yet.")
+    except Exception as e:
+        print(f"Could not fetch attached build: {e}")
+
+    if version["attributes"]["versionString"] != "2.0":
+        status, body = req(
+            "PATCH",
+            f"/appStoreVersions/{version_id}",
+            token,
+            {"data": {"type": "appStoreVersions", "id": version_id, "attributes": {"versionString": "2.0"}}},
+        )
+        print(f"versionString corrected to 2.0: {status}")
+
     status, body = req("GET", f"/appStoreVersions/{version_id}/appStoreVersionLocalizations", token)
     en_us_v = next(loc for loc in body["data"] if loc["attributes"]["locale"] == "en-US")
     v_loc_id = en_us_v["id"]
