@@ -1,0 +1,32 @@
+name: Create Custom Product Pages
+on:
+  workflow_dispatch:
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    env:
+      APP_ID: "6788092339"
+    defaults:
+      run:
+        working-directory: iOS
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyjwt cryptography
+
+      - name: Prepare ASC key
+        env:
+          ASC_KEY_BASE64: ${{ secrets.ASC_KEY_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          echo -n "$ASC_KEY_BASE64" | base64 --decode > "$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+
+      - name: Create custom product pages
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          export ASC_KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          python3 asc_create_custom_product_pages.py
