@@ -14,6 +14,7 @@
 		201099A2F9D357E4DC423F81 /* KeyringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */; };
 		218C8FA3F0E353678A6A01DD /* DuplicateDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD551BAF55163AC51920C0 /* DuplicateDetectionService.swift */; };
 		239CDEF1F6A0051B9D715969 /* KeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0013FF69E37140EF6AB74B9 /* KeyringDetailView.swift */; };
+		25B4A78CEE1CA7CD9D9CD72D /* KeyAppEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0734D22A655CC8178944DCA /* KeyAppEntity.swift */; };
 		3026D3BB9EFA6017783B79E6 /* KeyFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D79866961E7740065EF137 /* KeyFormView.swift */; };
 		33F25798CA4488B6CB86ACED /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0294837165C8681A2103F /* PaywallView.swift */; };
 		36631D96EDF37C8BD97AE63C /* Date+Keyring.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8098937B704F84F21F03B8EF /* Date+Keyring.swift */; };
@@ -28,6 +29,7 @@
 		75EBC8CEE3BB39E071B710A7 /* KeyringRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B254000BF3E4BF774089A9 /* KeyringRowView.swift */; };
 		8AA71766B3CCAF934FBFA22F /* AddEditKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7B2377930AD9CCB3E09A5E /* AddEditKeyringView.swift */; };
 		A02C3BC58D7F94D52FAD59F2 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAA1CC9C19CFC398C878B65 /* PersistenceController.swift */; };
+		A6762AC2E282BB5E93D77D4A /* KeyringIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC0422F65BB4C7BB1D46BD0 /* KeyringIntents.swift */; };
 		ACABB788A57FDA261A0B858F /* KeyringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C733BCAA6C40A06F5177AC /* KeyringTests.swift */; };
 		B4475AEE3BD42BAF484565BA /* KeyLocationEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853468DEE205316AE3860E2B /* KeyLocationEntity.swift */; };
 		C3629BA0327B59B4333BF3D7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7821A3C55D860D83BC23DD4 /* Theme.swift */; };
@@ -43,6 +45,7 @@
 		E05E4C3ACAAA5CCC71AE53FC /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CA5C4CFEA33E4D2ED7D535 /* EmptyStateView.swift */; };
 		E4A6D35592DE53581DB261A2 /* Keyring.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 8BCDABAEB546636250EC696E /* Keyring.storekit */; };
 		E73D9687009BB6500E6C9788 /* LegacyDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB732AD02F568A8F0E2E161 /* LegacyDataMigrator.swift */; };
+		E8F28C65BA04FAD001BF6245 /* SpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4C5A0EB9F1C1E34958E9D6 /* SpotlightIndexer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,8 @@
 
 /* Begin PBXFileReference section */
 		049C35EE86FF0F5A6866752B /* KeyringTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = KeyringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BC0422F65BB4C7BB1D46BD0 /* KeyringIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringIntents.swift; sourceTree = "<group>"; };
+		0C4C5A0EB9F1C1E34958E9D6 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		0FC0294837165C8681A2103F /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		20C733BCAA6C40A06F5177AC /* KeyringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTests.swift; sourceTree = "<group>"; };
 		22F0A823586D00837CA297CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -93,6 +98,7 @@
 		9EA76F20031DB9104513A0A2 /* KeyEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEntity.swift; sourceTree = "<group>"; };
 		A7821A3C55D860D83BC23DD4 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AA62466220F72ED2CE20F8BB /* KeyringsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringsListView.swift; sourceTree = "<group>"; };
+		B0734D22A655CC8178944DCA /* KeyAppEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyAppEntity.swift; sourceTree = "<group>"; };
 		C1725E49D7B7EFC98CE0AA4C /* KeyCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCategory.swift; sourceTree = "<group>"; };
 		C85D8F12124333F184EE41A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C92530198F414F43FB63C643 /* PlanLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanLimits.swift; sourceTree = "<group>"; };
@@ -109,7 +115,9 @@
 		04D6201D1C8F3C2602CCD1C0 /* Integrations */ = {
 			isa = PBXGroup;
 			children = (
+				87567674B2EEF26DCE5584E8 /* AppIntents */,
 				BEE39F755C74D13BBA3071AA /* Location */,
+				FD844677B1B252F762F2F551 /* Spotlight */,
 				EF33DAEDFE4ADE2FD26C3098 /* StoreKit */,
 				FB0705B05601ED9298F70490 /* Vision */,
 			);
@@ -229,6 +237,15 @@
 			);
 			sourceTree = "<group>";
 		};
+		87567674B2EEF26DCE5584E8 /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				B0734D22A655CC8178944DCA /* KeyAppEntity.swift */,
+				0BC0422F65BB4C7BB1D46BD0 /* KeyringIntents.swift */,
+			);
+			path = AppIntents;
+			sourceTree = "<group>";
+		};
 		8A904160D7DE1CB3A45EAEB8 /* KeyringTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -342,6 +359,14 @@
 				39DD551BAF55163AC51920C0 /* DuplicateDetectionService.swift */,
 			);
 			path = Vision;
+			sourceTree = "<group>";
+		};
+		FD844677B1B252F762F2F551 /* Spotlight */ = {
+			isa = PBXGroup;
+			children = (
+				0C4C5A0EB9F1C1E34958E9D6 /* SpotlightIndexer.swift */,
+			);
+			path = Spotlight;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -477,6 +502,7 @@
 				36631D96EDF37C8BD97AE63C /* Date+Keyring.swift in Sources */,
 				218C8FA3F0E353678A6A01DD /* DuplicateDetectionService.swift in Sources */,
 				E05E4C3ACAAA5CCC71AE53FC /* EmptyStateView.swift in Sources */,
+				25B4A78CEE1CA7CD9D9CD72D /* KeyAppEntity.swift in Sources */,
 				DC14E4AF81515D0BDD0A1609 /* KeyCategory.swift in Sources */,
 				13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */,
 				DAF537AF527ED5B21869D8A8 /* KeyEntity.swift in Sources */,
@@ -489,6 +515,7 @@
 				0C2A906343159436BE2AD209 /* KeyringApp.swift in Sources */,
 				239CDEF1F6A0051B9D715969 /* KeyringDetailView.swift in Sources */,
 				02927EB86C26A48501E89103 /* KeyringEntity.swift in Sources */,
+				A6762AC2E282BB5E93D77D4A /* KeyringIntents.swift in Sources */,
 				75EBC8CEE3BB39E071B710A7 /* KeyringRowView.swift in Sources */,
 				1CE8F614917DB0906F839B2E /* KeyringStore.swift in Sources */,
 				3C62DBC1CFB000C7CC8B0A92 /* KeyringsListView.swift in Sources */,
@@ -502,6 +529,7 @@
 				424FC0B06EF358915282E254 /* RootTabView.swift in Sources */,
 				C6875C562B376EFC9E0DA796 /* RootView.swift in Sources */,
 				DA0F1080A74820EED3169A3C /* SettingsView.swift in Sources */,
+				E8F28C65BA04FAD001BF6245 /* SpotlightIndexer.swift in Sources */,
 				C3629BA0327B59B4333BF3D7 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

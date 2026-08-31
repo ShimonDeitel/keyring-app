@@ -63,6 +63,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
     }
 
     func deleteKeyring(_ keyring: KeyringEntity) throws {
+        SpotlightIndexer.deindexKeyring(keyring)
         context.delete(keyring)
         try save()
     }
@@ -85,6 +86,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         context.insert(key)
         log(.created, for: key)
         try save()
+        SpotlightIndexer.index(key)
         return key
     }
 
@@ -102,9 +104,11 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         key.updatedAt = .now
         log(.edited, for: key)
         try save()
+        SpotlightIndexer.index(key)
     }
 
     func deleteKey(_ key: KeyEntity) throws {
+        SpotlightIndexer.deindex(key)
         context.delete(key)
         try save()
     }
