@@ -12,6 +12,7 @@
 		13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A02D7DE358F828380103BB /* KeyDetailView.swift */; };
 		1CE8F614917DB0906F839B2E /* KeyringStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8819FE514C4335BD7C9F450 /* KeyringStore.swift */; };
 		201099A2F9D357E4DC423F81 /* KeyringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */; };
+		218C8FA3F0E353678A6A01DD /* DuplicateDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD551BAF55163AC51920C0 /* DuplicateDetectionService.swift */; };
 		239CDEF1F6A0051B9D715969 /* KeyringDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0013FF69E37140EF6AB74B9 /* KeyringDetailView.swift */; };
 		3026D3BB9EFA6017783B79E6 /* KeyFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D79866961E7740065EF137 /* KeyFormView.swift */; };
 		33F25798CA4488B6CB86ACED /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC0294837165C8681A2103F /* PaywallView.swift */; };
@@ -68,6 +69,7 @@
 		22F0A823586D00837CA297CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2DF379E683906A95AE9D7719 /* KeyHistoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyHistoryRowView.swift; sourceTree = "<group>"; };
 		31A02D7DE358F828380103BB /* KeyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDetailView.swift; sourceTree = "<group>"; };
+		39DD551BAF55163AC51920C0 /* DuplicateDetectionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateDetectionService.swift; sourceTree = "<group>"; };
 		51A107DEDE094600F67D3EAE /* KeyringEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringEntity.swift; sourceTree = "<group>"; };
 		591264DFA641F8A660206946 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		5D7B2377930AD9CCB3E09A5E /* AddEditKeyringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditKeyringView.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 			children = (
 				BEE39F755C74D13BBA3071AA /* Location */,
 				EF33DAEDFE4ADE2FD26C3098 /* StoreKit */,
+				FB0705B05601ED9298F70490 /* Vision */,
 			);
 			path = Integrations;
 			sourceTree = "<group>";
@@ -333,6 +336,14 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		FB0705B05601ED9298F70490 /* Vision */ = {
+			isa = PBXGroup;
+			children = (
+				39DD551BAF55163AC51920C0 /* DuplicateDetectionService.swift */,
+			);
+			path = Vision;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -464,6 +475,7 @@
 				D74CA84F27C342C4FE3F12BA /* ActivityLogView.swift in Sources */,
 				8AA71766B3CCAF934FBFA22F /* AddEditKeyringView.swift in Sources */,
 				36631D96EDF37C8BD97AE63C /* Date+Keyring.swift in Sources */,
+				218C8FA3F0E353678A6A01DD /* DuplicateDetectionService.swift in Sources */,
 				E05E4C3ACAAA5CCC71AE53FC /* EmptyStateView.swift in Sources */,
 				DC14E4AF81515D0BDD0A1609 /* KeyCategory.swift in Sources */,
 				13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */,

@@ -106,18 +106,53 @@ final class KeyringStore {
         keyrings.flatMap { ring in ring.loanedKeys.map { (ring, $0) } }
     }
 
+    /// Plain substring search for free users; Pro also gets a handful of
+    /// natural-language filters ("loaned keys", "keys I haven't checked
+    /// recently") over the same structured local data — no network call,
+    /// no key photo or note ever leaves the device.
     func search(_ query: String) -> [(keyring: KeyringEntity, key: KeyEntity)] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !trimmed.isEmpty else { return [] }
         let scopedRings = entitlements.isPro ? keyrings : Array(keyrings.prefix(1))
-        return scopedRings.flatMap { ring in
-            ring.sortedKeys.filter { key in
-                key.name.lowercased().contains(trimmed)
-                    || key.opens.lowercased().contains(trimmed)
-                    || key.category.displayName.lowercased().contains(trimmed)
-                    || (entitlements.isPro && key.notes.lowercased().contains(trimmed))
-            }.map { (ring, $0) }
+        let allPairs = scopedRings.flatMap { ring in ring.sortedKeys.map { (ring, $0) } }
+
+        if entitlements.isPro, let filtered = naturalLanguageResults(for: trimmed, in: allPairs) {
+            return filtered
         }
+
+        return allPairs.filter { _, key in
+            key.name.lowercased().contains(trimmed)
+                || key.opens.lowercased().contains(trimmed)
+                || key.category.displayName.lowercased().contains(trimmed)
+                || (entitlements.isPro && key.notes.lowercased().contains(trimmed))
+        }
+    }
+
+    private func naturalLanguageResults(for query: String, in pairs: [(keyring: KeyringEntity, key: KeyEntity)]) -> [(keyring: KeyringEntity, key: KeyEntity)]? {
+        if query.contains("loaned") || query.contains("out") {
+            return pairs.filter { $0.key.isLoaned }
+        }
+        if query.contains("lost") {
+            return pairs.filter { $0.key.isLost }
+        }
+        if query.contains("spare") {
+            return pairs.filter { $0.key.isSpare }
+        }
+        if query.contains("favorite") || query.contains("starred") {
+            return pairs.filter { $0.key.isFavorite }
+        }
+        if query.contains("haven't checked") || query.contains("not confirmed") || query.contains("never confirmed") || query.contains("recently") {
+            let staleThreshold = Date().addingTimeInterval(-30 * 86400)
+            return pairs.filter { $0.key.lastConfirmedAt == nil || $0.key.lastConfirmedAt! < staleThreshold }
+        }
+        for category in KeyCategory.allCases {
+            let synonyms: [KeyCategory: [String]] = [.house: ["home"]]
+            let names = [category.displayName.lowercased()] + (synonyms[category] ?? [])
+            if names.contains(where: { query.contains($0) }) {
+                return pairs.filter { $0.key.category == category }
+            }
+        }
+        return nil
     }
 
     @discardableResult

@@ -15,6 +15,8 @@ struct KeyFormView: View {
     @State private var assignedLocationName: String
     @State private var pickerItem: PhotosPickerItem?
     @State private var photoData: Data?
+    @State private var isCheckingDuplicates = false
+    @State private var duplicateCandidates: [DuplicateDetectionService.Candidate] = []
 
     init(keyring: KeyringEntity, existing: KeyEntity?) {
         self.keyring = keyring
@@ -79,10 +81,18 @@ struct KeyFormView: View {
                     Button("Cancel") { dismiss() }.buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
-                        .buttonStyle(.plain)
-                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                        .accessibilityIdentifier("saveKeyButton")
+                    Button {
+                        Task { await saveTappingCheckFirst() }
+                    } label: {
+                        if isCheckingDuplicates {
+                            ProgressView()
+                        } else {
+                            Text("Save")
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isCheckingDuplicates)
+                    .accessibilityIdentifier("saveKeyButton")
                 }
             }
             .onChange(of: pickerItem) { _, item in
@@ -92,19 +102,128 @@ struct KeyFormView: View {
                     }
                 }
             }
+            .sheet(isPresented: Binding(
+                get: { !duplicateCandidates.isEmpty },
+                set: { if !$0 { duplicateCandidates = [] } }
+            )) {
+                DuplicateCandidatesSheet(
+                    candidates: duplicateCandidates,
+                    onAddAnyway: {
+                        duplicateCandidates = []
+                        performSave()
+                    },
+                    onCancel: {
+                        duplicateCandidates = []
+                    }
+                )
+            }
         }
     }
 
-    private func save() {
+    /// A newly picked photo (not the one the key already had) gets checked
+    /// against every other key's photo for visual similarity — Pro only,
+    /// entirely on-device.
+    private func saveTappingCheckFirst() async {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let photoChanged = photoData != nil && photoData != existing?.photoData
+        guard store.isPro, photoChanged, let photoData else {
+            performSave()
+            return
+        }
+        isCheckingDuplicates = true
+        let otherKeys = store.keyrings.flatMap { $0.sortedKeys }.filter { $0.id != existing?.id }
+        let candidates = await Task.detached(priority: .userInitiated) {
+            DuplicateDetectionService.findCandidates(forNewPhoto: photoData, among: otherKeys)
+        }.value
+        isCheckingDuplicates = false
+        if candidates.isEmpty {
+            performSave()
+        } else {
+            duplicateCandidates = candidates
+        }
+    }
+
+    private func performSave() {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let locationName = assignedLocationName.trimmingCharacters(in: .whitespaces).isEmpty ? nil : assignedLocationName
         if let existing {
             store.updateKey(existing, name: name, photoData: photoData, keyDescription: existing.keyDescription, opens: opens, category: category, notes: notes, assignedLocationName: locationName)
-            dismiss()
         } else {
             guard store.canAddKey(to: keyring) else { return }
             store.addKey(to: keyring, name: name, photoData: photoData, keyDescription: "", opens: opens, category: category, notes: notes, assignedLocationName: locationName)
-            dismiss()
+        }
+        dismiss()
+    }
+}
+
+private struct DuplicateCandidatesSheet: View {
+    let candidates: [DuplicateDetectionService.Candidate]
+    let onAddAnyway: () -> Void
+    let onCancel: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                KRTheme.backdrop.ignoresSafeArea()
+                ScrollView {
+                    VStack(spacing: KRTheme.Spacing.lg) {
+                        Image(systemName: "doc.on.doc.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(KRTheme.brass)
+                            .padding(.top, 24)
+                        Text("Possible duplicate")
+                            .font(KRTheme.titleFont)
+                            .foregroundStyle(KRTheme.ink)
+                        Text("This photo looks like a key you already have. Double check before adding another.")
+                            .font(.subheadline)
+                            .foregroundStyle(KRTheme.inkFaded)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, KRTheme.Spacing.lg)
+
+                        VStack(spacing: 10) {
+                            ForEach(Array(candidates.enumerated()), id: \.offset) { _, candidate in
+                                HStack(spacing: 12) {
+                                    KeyPhotoView(photoData: candidate.key.photoData, symbolName: candidate.key.category.symbolName, size: 44)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(candidate.key.name)
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(KRTheme.ink)
+                                        StatusBadge(text: candidate.similarity.label, color: KRTheme.brass)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(12)
+                                .background(KRTheme.surface)
+                                .clipShape(RoundedRectangle(cornerRadius: KRTheme.smallCorner))
+                            }
+                        }
+                        .padding(.horizontal, KRTheme.Spacing.md)
+
+                        VStack(spacing: 10) {
+                            Button("Add Anyway") {
+                                onAddAnyway()
+                            }
+                            .buttonStyle(.plain)
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(KRTheme.brass)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                            Button("Cancel") {
+                                onCancel()
+                            }
+                            .buttonStyle(.plain)
+                            .font(.subheadline)
+                            .foregroundStyle(KRTheme.inkFaded)
+                        }
+                        .padding(.horizontal, KRTheme.Spacing.lg)
+                        .padding(.bottom, KRTheme.Spacing.lg)
+                    }
+                }
+            }
         }
     }
 }
