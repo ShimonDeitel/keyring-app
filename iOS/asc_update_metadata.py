@@ -134,15 +134,44 @@ def main():
     # Check what build (if any) is actually attached -- the appStoreVersion's
     # own versionString doesn't auto-follow an uploaded build's
     # CFBundleShortVersionString, so it can lag behind what altool uploaded.
+    attached_build_id = None
     try:
         status, build_body = req("GET", f"/appStoreVersions/{version_id}/build", token)
         build_data = build_body.get("data")
         if build_data:
-            print(f"Attached build: {build_data.get('id')}")
+            attached_build_id = build_data.get("id")
+            print(f"Attached build: {attached_build_id}")
         else:
             print("No build attached to this appStoreVersion yet.")
     except Exception as e:
         print(f"Could not fetch attached build: {e}")
+
+    if not attached_build_id:
+        # altool uploads land in /builds but are never auto-selected onto a
+        # version -- list every build for the app and, once one has finished
+        # processing, attach the newest.
+        status, builds_body = req("GET", f"/apps/{APP_ID}/builds?sort=-uploadedDate&limit=10", token)
+        for b in builds_body["data"]:
+            a = b["attributes"]
+            print(f"build {b['id']}: version={a.get('version')} processingState={a.get('processingState')} uploadedDate={a.get('uploadedDate')}")
+        ready = [b for b in builds_body["data"] if b["attributes"].get("processingState") == "VALID"]
+        if ready:
+            newest = ready[0]
+            status, body = req(
+                "PATCH",
+                f"/appStoreVersions/{version_id}",
+                token,
+                {
+                    "data": {
+                        "type": "appStoreVersions",
+                        "id": version_id,
+                        "relationships": {"build": {"data": {"type": "builds", "id": newest["id"]}}},
+                    }
+                },
+            )
+            print(f"Attached build {newest['id']} (version {newest['attributes'].get('version')}) to appStoreVersion: {status}")
+        else:
+            print("No VALID (finished-processing) build available yet -- Apple is still processing the upload. Re-run this workflow in a few minutes.")
 
     if version["attributes"]["versionString"] != "2.0":
         status, body = req(
