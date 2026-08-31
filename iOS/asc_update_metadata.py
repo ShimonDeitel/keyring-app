@@ -79,26 +79,42 @@ def req(method, path, token, body=None):
         raise
 
 
+EDITABLE_STATES = {
+    "PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "METADATA_REJECTED",
+    "INVALID_BINARY", "REJECTED",
+}
+
+
 def main():
     token = make_jwt()
 
-    # --- Subtitle lives on appInfoLocalizations ---
+    # --- Subtitle lives on appInfoLocalizations. An app can have TWO
+    # appInfo objects at once (the live one + the one for the pending
+    # version) -- must pick the editable one, not just data[0]. ---
     status, body = req("GET", f"/apps/{APP_ID}/appInfos", token)
-    app_info_id = body["data"][0]["id"]
-    print(f"appInfo: {app_info_id}")
+    for info in body["data"]:
+        print(f"appInfo {info['id']}: state={info['attributes'].get('appStoreState')}")
+    editable_infos = [i for i in body["data"] if i["attributes"].get("appStoreState") in EDITABLE_STATES]
+    if not editable_infos:
+        print("No editable appInfo found; skipping subtitle update.")
+        app_info_id = None
+    else:
+        app_info_id = editable_infos[0]["id"]
+        print(f"Using editable appInfo: {app_info_id}")
 
-    status, body = req("GET", f"/appInfos/{app_info_id}/appInfoLocalizations", token)
-    en_us = next(loc for loc in body["data"] if loc["attributes"]["locale"] == "en-US")
-    loc_id = en_us["id"]
-    print(f"appInfoLocalization (en-US): {loc_id}, current subtitle={en_us['attributes'].get('subtitle')!r}")
+    if app_info_id:
+        status, body = req("GET", f"/appInfos/{app_info_id}/appInfoLocalizations", token)
+        en_us = next(loc for loc in body["data"] if loc["attributes"]["locale"] == "en-US")
+        loc_id = en_us["id"]
+        print(f"appInfoLocalization (en-US): {loc_id}, current subtitle={en_us['attributes'].get('subtitle')!r}")
 
-    status, body = req(
-        "PATCH",
-        f"/appInfoLocalizations/{loc_id}",
-        token,
-        {"data": {"type": "appInfoLocalizations", "id": loc_id, "attributes": {"subtitle": SUBTITLE}}},
-    )
-    print(f"Subtitle updated: {status}")
+        status, body = req(
+            "PATCH",
+            f"/appInfoLocalizations/{loc_id}",
+            token,
+            {"data": {"type": "appInfoLocalizations", "id": loc_id, "attributes": {"subtitle": SUBTITLE}}},
+        )
+        print(f"Subtitle updated: {status}")
 
     # --- Description/keywords/promotional text live on appStoreVersionLocalizations,
     # scoped to a specific (editable) appStoreVersion ---
@@ -107,8 +123,7 @@ def main():
     for v in versions:
         print(f"version {v['attributes']['versionString']}: state={v['attributes']['appStoreState']}")
 
-    editable_states = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "METADATA_REJECTED", "INVALID_BINARY", "REJECTED"}
-    editable = [v for v in versions if v["attributes"]["appStoreState"] in editable_states]
+    editable = [v for v in versions if v["attributes"]["appStoreState"] in EDITABLE_STATES]
     if not editable:
         print("No editable appStoreVersion found; skipping description/keywords/promo text.")
         return
