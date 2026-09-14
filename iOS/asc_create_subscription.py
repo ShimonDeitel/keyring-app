@@ -251,6 +251,14 @@ def main():
     ensure_review_screenshot(token, sub_id)
     print(f"Subscription ready: group={group_id} subscription={sub_id} productId={PRODUCT_ID}")
 
+    _, body = req("GET", f"/subscriptions/{sub_id}", token)
+    print(f"Subscription state: {body['data']['attributes'].get('state')}")
+    try:
+        status, body = req("GET", f"/subscriptions/{sub_id}/subscriptionVersion", token)
+        print(f"subscriptionVersion: {json.dumps(body, indent=2)[:1500]}")
+    except Exception as e:
+        print(f"subscriptionVersion GET failed: {e}", file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()
