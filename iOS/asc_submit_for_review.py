@@ -156,10 +156,17 @@ def main():
         submission_id = body["data"]["id"]
         print(f"Created review submission: {submission_id}")
 
-    _, items_body = req("GET", f"/reviewSubmissions/{submission_id}/items", token)
+    # The plain items GET only returns {state} -- the relationship data
+    # (which item points at which appStoreVersion/subscriptionVersion/etc.)
+    # needs an explicit fields[] request or every item looks relationship-less.
+    _, items_body = req(
+        "GET",
+        f"/reviewSubmissions/{submission_id}/items"
+        "?fields[reviewSubmissionItems]=state,appStoreVersion,subscriptionVersion,subscriptionGroupVersion",
+        token,
+    )
     existing_items = items_body["data"]
     print(f"Submission has {len(existing_items)} item(s) already attached")
-    print(f"Raw existing items: {json.dumps(existing_items, indent=2)[:3000]}")
 
     items = desired_items(version_id, subscription_version_id, subscription_group_version_id)
     all_attached = attach_items(token, submission_id, items, existing_items)
