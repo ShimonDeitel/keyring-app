@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import UserNotifications
 
 struct KeyDetailView: View {
     @Environment(KeyringStore.self) private var store
@@ -348,6 +349,7 @@ private struct LoanKeySheet: View {
     @State private var person: String
     @State private var expectedReturn: Date
     @State private var hasExpectedReturn: Bool
+    @State private var notificationsDenied = false
 
     let existing: KeyEntity
     let onSave: (String, Date?) -> Void
@@ -372,7 +374,18 @@ private struct LoanKeySheet: View {
                     if hasExpectedReturn {
                         DatePicker("Return by", selection: $expectedReturn, displayedComponents: .date)
                     }
+                    // Reminders are scheduled lazily on save; a prior "Don't Allow"
+                    // would otherwise leave this toggle silently doing nothing.
+                    if hasExpectedReturn, notificationsDenied {
+                        Label("Notifications are off, so this reminder won't alert you. Enable them in Settings.", systemImage: "bell.slash")
+                            .font(.caption)
+                            .foregroundStyle(KRTheme.lostColor)
+                    }
                 }
+            }
+            .task {
+                let settings = await UNUserNotificationCenter.current().notificationSettings()
+                notificationsDenied = settings.authorizationStatus == .denied
             }
             .dismissKeyboardOnTap()
             .navigationTitle("Loan Key")

@@ -6,6 +6,7 @@ import SwiftUI
 /// legacy data, or any existing keyring) never see it.
 struct OnboardingView: View {
     let onGetStarted: () -> Void
+    @State private var hasTurned = false
 
     var body: some View {
         ZStack {
@@ -15,6 +16,15 @@ struct OnboardingView: View {
                 Image(systemName: "key.fill")
                     .font(.system(size: 64))
                     .foregroundStyle(KRTheme.brass)
+                    .rotationEffect(.degrees(hasTurned ? -35 : 0))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            Haptics.lightTap()
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.45)) {
+                                hasTurned = true
+                            }
+                        }
+                    }
                 Text("Welcome to Keyring")
                     .font(.system(.largeTitle, design: .rounded).weight(.bold))
                     .foregroundStyle(KRTheme.ink)

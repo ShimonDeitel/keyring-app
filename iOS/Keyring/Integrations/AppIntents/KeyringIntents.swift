@@ -21,7 +21,8 @@ enum IntentSupport {
 
     static func isPro() async -> Bool {
         for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result, transaction.productID == PurchaseManager.proProductID {
+            if case .verified(let transaction) = result,
+               transaction.productID == PurchaseManager.proProductID || transaction.productID == PurchaseManager.proMonthlyID {
                 return true
             }
         }

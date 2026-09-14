@@ -196,6 +196,7 @@ struct KeyRingFanView: View {
             .accessibilityIdentifier("keyRingFanToggle")
             .accessibilityAddTraits(.isButton)
             .onTapGesture {
+                Haptics.fanRingToggle()
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.65)) {
                     isFanned.toggle()
                 }

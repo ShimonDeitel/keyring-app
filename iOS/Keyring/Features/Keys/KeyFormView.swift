@@ -146,6 +146,7 @@ struct KeyFormView: View {
         if candidates.isEmpty {
             performSave()
         } else {
+            Haptics.warning()
             duplicateCandidates = candidates
         }
     }

@@ -2,8 +2,8 @@ import SwiftUI
 
 private let proFeatures: [(icon: String, text: String)] = [
     ("infinity", "Unlimited keys and keyrings"),
+    ("bell.badge", "Loan reminders -- know the day a key is due back"),
     ("mappin.and.ellipse", "Location history for every key"),
-    ("arrow.up.right.and.arrow.down.left", "Loan, spare, and lost-key tracking"),
     ("clock.arrow.circlepath", "Full activity history"),
     ("magnifyingglass", "Search across every keyring")
 ]

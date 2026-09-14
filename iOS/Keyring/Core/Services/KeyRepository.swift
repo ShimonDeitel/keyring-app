@@ -90,6 +90,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         log(.created, for: key)
         try save()
         SpotlightIndexer.index(key)
+        Haptics.success()
         return key
     }
 
@@ -121,6 +122,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         key.isFavorite.toggle()
         key.updatedAt = .now
         try save()
+        Haptics.lightTap()
     }
 
     // MARK: Location & loan lifecycle
@@ -163,6 +165,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         key.updatedAt = .now
         log(.markedLost, for: key)
         try save()
+        Haptics.warning()
     }
 
     func markFound(_ key: KeyEntity) throws {
@@ -170,5 +173,6 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         key.updatedAt = .now
         log(.markedFound, for: key)
         try save()
+        Haptics.success()
     }
 }
