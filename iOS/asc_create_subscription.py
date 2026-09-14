@@ -279,8 +279,8 @@ def main():
     _, body = req("GET", f"/subscriptionGroups/{group_id}/subscriptionGroupLocalizations", token)
     print(f"Group localizations: {json.dumps(body.get('data'), indent=2)[:1500]}")
 
-    _, body = req("GET", f"/subscriptions/{sub_id}/prices", token)
-    print(f"Prices: {json.dumps(body.get('data'), indent=2)[:1500]}")
+    _, body = req("GET", f"/subscriptions/{sub_id}/prices?include=subscriptionPricePoint", token)
+    print(f"Prices (with price point): {json.dumps(body, indent=2)[:3000]}")
 
 
 if __name__ == "__main__":
