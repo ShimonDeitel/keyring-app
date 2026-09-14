@@ -68,15 +68,21 @@ def main():
     print(f"Target version: {version_id} ({pending[0]['attributes']['versionString']})")
 
     # Apple rejects the submission until the attached build declares its
-    # export-compliance status. Info.plist now sets this for future builds
-    # (ITSAppUsesNonExemptEncryption); patch the already-uploaded build too.
+    # export-compliance status. Info.plist now sets this at build time
+    # (ITSAppUsesNonExemptEncryption), so only PATCH builds where it's still
+    # unset -- Apple 409s ENTITY_ERROR.ATTRIBUTE.INVALID if you try to
+    # "update" a value that's already set, even to the same value.
     _, build_body = req("GET", f"/appStoreVersions/{version_id}/build", token)
     if build_body.get("data"):
         build_id = build_body["data"]["id"]
-        req("PATCH", f"/builds/{build_id}", token, {
-            "data": {"type": "builds", "id": build_id, "attributes": {"usesNonExemptEncryption": False}}
-        })
-        print(f"Set usesNonExemptEncryption=false on build {build_id}")
+        _, full_build = req("GET", f"/builds/{build_id}", token)
+        if full_build["data"]["attributes"].get("usesNonExemptEncryption") is None:
+            req("PATCH", f"/builds/{build_id}", token, {
+                "data": {"type": "builds", "id": build_id, "attributes": {"usesNonExemptEncryption": False}}
+            })
+            print(f"Set usesNonExemptEncryption=false on build {build_id}")
+        else:
+            print(f"Build {build_id} already declares usesNonExemptEncryption={full_build['data']['attributes']['usesNonExemptEncryption']}")
 
     _, existing = req("GET", f"/apps/{APP_ID}/reviewSubmissions", token)
     open_submission = next((s for s in existing["data"] if s["attributes"].get("state") in OPEN_STATES), None)
