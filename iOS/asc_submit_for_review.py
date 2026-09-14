@@ -18,6 +18,7 @@ PREPARE_FOR_SUBMISSION) and resubmit fresh with everything together.
 Requires env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, APP_ID
 Optional env: SUBSCRIPTION_VERSION_ID, SUBSCRIPTION_GROUP_VERSION_ID
 """
+import base64
 import json
 import os
 import sys
@@ -96,17 +97,32 @@ def desired_items(version_id, subscription_version_id, subscription_group_versio
     return items
 
 
+def existing_target_ids(existing_items):
+    """The items GET doesn't return usable relationship data (fields[]
+    requested or not) -- but each item's own id is base64 of
+    "{submissionId}|{typeCode}|{targetResourceId}", so decode that instead
+    of trusting the relationships payload."""
+    ids = set()
+    for item in existing_items:
+        raw_id = item["id"]
+        padded = raw_id + "=" * (-len(raw_id) % 4)
+        try:
+            decoded = base64.urlsafe_b64decode(padded).decode()
+            target_id = decoded.split("|")[-1]
+            ids.add(target_id)
+        except Exception:
+            continue
+    return ids
+
+
 def attach_items(token, submission_id, items, existing_items):
     """Attach each (relationship_name, type, id) not already present.
     Returns True if every item ended up attached (already-present or
     newly attached), False if any attach was rejected."""
     all_ok = True
+    already_ids = existing_target_ids(existing_items)
     for rel_name, rel_type, rel_id in items:
-        already = any(
-            i.get("relationships", {}).get(rel_name, {}).get("data", {}).get("id") == rel_id
-            for i in existing_items
-        )
-        if already:
+        if rel_id in already_ids:
             print(f"{rel_name} already attached.")
             continue
         try:
@@ -156,15 +172,10 @@ def main():
         submission_id = body["data"]["id"]
         print(f"Created review submission: {submission_id}")
 
-    # The plain items GET only returns {state} -- the relationship data
-    # (which item points at which appStoreVersion/subscriptionVersion/etc.)
-    # needs an explicit fields[] request or every item looks relationship-less.
-    _, items_body = req(
-        "GET",
-        f"/reviewSubmissions/{submission_id}/items"
-        "?fields[reviewSubmissionItems]=state,appStoreVersion,subscriptionVersion,subscriptionGroupVersion",
-        token,
-    )
+    # This GET only returns {state} per item -- no usable relationship data
+    # even with fields[] requested -- so existing_target_ids() decodes each
+    # item's own id instead (see its docstring).
+    _, items_body = req("GET", f"/reviewSubmissions/{submission_id}/items", token)
     existing_items = items_body["data"]
     print(f"Submission has {len(existing_items)} item(s) already attached")
 
