@@ -211,6 +211,21 @@ def ensure_price(token, sub_id):
     print(f"Set price (${TARGET_PRICE} USA, point {price_point_id}): {status}")
 
 
+def ensure_review_note(token, sub_id):
+    _, body = req("GET", f"/subscriptions/{sub_id}", token)
+    if body["data"]["attributes"].get("reviewNote"):
+        print("Review note already set.")
+        return
+    req("PATCH", f"/subscriptions/{sub_id}", token, {
+        "data": {
+            "type": "subscriptions",
+            "id": sub_id,
+            "attributes": {"reviewNote": "Unlocks unlimited keys/keyrings, loan reminders, location history, and duplicate detection. Same entitlement as the existing keyring_pro_unlock one-time IAP."},
+        }
+    })
+    print("Set review note.")
+
+
 def ensure_review_screenshot(token, sub_id):
     _, body = req("GET", f"/subscriptions/{sub_id}/appStoreReviewScreenshot", token)
     if body.get("data"):
@@ -249,6 +264,7 @@ def main():
     ensure_availability(token, sub_id)
     ensure_price(token, sub_id)
     ensure_review_screenshot(token, sub_id)
+    ensure_review_note(token, sub_id)
     print(f"Subscription ready: group={group_id} subscription={sub_id} productId={PRODUCT_ID}")
 
     _, body = req("GET", f"/subscriptions/{sub_id}", token)
