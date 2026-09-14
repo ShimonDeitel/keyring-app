@@ -24,6 +24,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Keyring uses your location only when you tap "Confirm My Location" on a key, to log where you last saw it. Keyring never tracks your location in the background.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Keyring lets you attach a photo of each key so you can recognize it at a glance later.</string>
 	<key>UILaunchScreen</key>
