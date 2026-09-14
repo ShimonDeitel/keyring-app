@@ -29,6 +29,10 @@ APP_ID = os.environ["APP_ID"]
 
 BASE = "https://api.appstoreconnect.apple.com/v1"
 OPEN_STATES = {"READY_FOR_REVIEW", "WAITING_FOR_REVIEW", "IN_REVIEW", "UNRESOLVED_ISSUES"}
+# DEVELOPER_REJECTED is the state a version lands in after *we* cancel a
+# review submission (e.g. to re-submit bundled with a new subscription) --
+# it's editable-again, not "Apple rejected it".
+PENDING_STATES = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "METADATA_REJECTED", "INVALID_BINARY", "REJECTED"}
 
 
 def make_jwt():
@@ -60,7 +64,7 @@ def main():
     token = make_jwt()
 
     _, versions = req("GET", f"/apps/{APP_ID}/appStoreVersions?limit=10", token)
-    pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] == "PREPARE_FOR_SUBMISSION"]
+    pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] in PENDING_STATES]
     version_id = None
     if pending:
         version_id = pending[0]["id"]
@@ -179,7 +183,7 @@ def main():
         # to PREPARE_FOR_SUBMISSION -- re-fetch rather than trust the
         # possibly-stale version_id captured before the cancel.
         _, versions = req("GET", f"/apps/{APP_ID}/appStoreVersions?limit=10", token)
-        pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] == "PREPARE_FOR_SUBMISSION"]
+        pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] in PENDING_STATES]
         version_id = pending[0]["id"] if pending else version_id
         print(f"Version to re-attach after cancel: {version_id}")
 
