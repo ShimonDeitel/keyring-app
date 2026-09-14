@@ -157,17 +157,26 @@ def main():
     except Exception as e:
         print(f"Could not fetch attached build: {e}")
 
-    if not attached_build_id:
-        # altool uploads land in /builds but are never auto-selected onto a
-        # version -- list every build for the app and, once one has finished
-        # processing, attach the newest.
-        status, builds_body = req("GET", f"/builds?filter[app]={APP_ID}&sort=-uploadedDate&limit=10", token)
-        for b in builds_body["data"]:
-            a = b["attributes"]
-            print(f"build {b['id']}: version={a.get('version')} processingState={a.get('processingState')} uploadedDate={a.get('uploadedDate')}")
-        ready = [b for b in builds_body["data"] if b["attributes"].get("processingState") == "VALID"]
-        if ready:
-            newest = ready[0]
+    # altool uploads land in /builds but are never auto-selected onto a
+    # version. Always check for the highest build NUMBER across the app,
+    # not just "is something already attached" -- a growing history of
+    # already-VALID older builds means a naive first-attach-wins check
+    # never notices a newer upload once anything is attached at all (bit
+    # us: a 2.0-era build stayed attached to the 2.1 version because it
+    # was "already attached", even after a genuinely newer build existed).
+    status, builds_body = req("GET", f"/builds?filter[app]={APP_ID}&sort=-uploadedDate&limit=10", token)
+    all_builds = builds_body["data"]
+    for b in all_builds:
+        a = b["attributes"]
+        print(f"build {b['id']}: version={a.get('version')} processingState={a.get('processingState')} uploadedDate={a.get('uploadedDate')}")
+
+    if not all_builds:
+        print("No builds found for this app yet.")
+    else:
+        latest = max(all_builds, key=lambda b: int(b["attributes"].get("version") or 0))
+        if latest["id"] == attached_build_id:
+            print(f"Already attached to the latest build (version {latest['attributes'].get('version')}).")
+        elif latest["attributes"].get("processingState") == "VALID":
             status, body = req(
                 "PATCH",
                 f"/appStoreVersions/{version_id}",
@@ -176,13 +185,13 @@ def main():
                     "data": {
                         "type": "appStoreVersions",
                         "id": version_id,
-                        "relationships": {"build": {"data": {"type": "builds", "id": newest["id"]}}},
+                        "relationships": {"build": {"data": {"type": "builds", "id": latest["id"]}}},
                     }
                 },
             )
-            print(f"Attached build {newest['id']} (version {newest['attributes'].get('version')}) to appStoreVersion: {status}")
+            print(f"Attached build {latest['id']} (version {latest['attributes'].get('version')}) to appStoreVersion: {status}")
         else:
-            print("No VALID (finished-processing) build available yet -- Apple is still processing the upload. Re-run this workflow in a few minutes.")
+            print(f"Latest build (version {latest['attributes'].get('version')}) is still processingState={latest['attributes'].get('processingState')} -- not attaching yet. Re-run in a few minutes.")
 
     if version["attributes"]["versionString"] != TARGET_VERSION:
         status, body = req(
