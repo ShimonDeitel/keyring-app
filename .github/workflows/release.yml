@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [master]
-    paths: ['iOS/**']
+    paths: ['iOS/**', '!iOS/asc_*.py', '!iOS/screenshots/**']
 jobs:
   build:
     runs-on: macos-15
