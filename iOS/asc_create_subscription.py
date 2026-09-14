@@ -173,10 +173,13 @@ def ensure_availability(token, sub_id):
 
 
 def ensure_price(token, sub_id):
+    # Not a simple "has any price -> skip": the first run only priced USA
+    # and left ~150 other territories missing, which blocks review
+    # submission. Re-check against the full territory count instead of a
+    # single existence check -- PATCHing already-correct prices again is
+    # harmless.
     _, body = req("GET", f"/subscriptions/{sub_id}", token)
-    if body["data"]["relationships"].get("prices", {}).get("data"):
-        print("Subscription already has a price; skipping.")
-        return
+    existing_prices = body["data"]["relationships"].get("prices", {}).get("data") or []
 
     price_point_id = None
     next_url = f"/subscriptions/{sub_id}/pricePoints?filter[territory]=USA&limit=200"
@@ -215,7 +218,11 @@ def ensure_price(token, sub_id):
         if next_url and next_url.startswith("http"):
             next_url = next_url[len(BASE):]
     territory_points["USA"] = price_point_id
-    print(f"Pricing {len(territory_points)} territories.")
+    print(f"{len(territory_points)} territories need pricing; {len(existing_prices)} price(s) already set.")
+
+    if len(existing_prices) >= len(territory_points):
+        print("Already fully priced; skipping.")
+        return
 
     included = []
     price_refs = []
