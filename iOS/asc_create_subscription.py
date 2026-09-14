@@ -55,20 +55,30 @@ def make_jwt():
     return jwt.encode(payload, private_key, algorithm="ES256", headers=headers)
 
 
-def req(method, path, token, body=None):
+def req(method, path, token, body=None, retries=3):
     url = path if path.startswith("http") else BASE + path
     data = json.dumps(body).encode() if body is not None else None
-    r = urllib.request.Request(url, data=data, method=method)
-    r.add_header("Authorization", f"Bearer {token}")
-    r.add_header("Content-Type", "application/json")
-    try:
-        with urllib.request.urlopen(r) as resp:
-            raw = resp.read()
-            return resp.status, (json.loads(raw) if raw else {})
-    except urllib.error.HTTPError as e:
-        raw = e.read()
-        print(f"HTTP {e.code} on {method} {url}: {raw.decode()[:2000]}", file=sys.stderr)
-        raise
+    for attempt in range(retries):
+        r = urllib.request.Request(url, data=data, method=method)
+        r.add_header("Authorization", f"Bearer {token}")
+        r.add_header("Content-Type", "application/json")
+        try:
+            with urllib.request.urlopen(r) as resp:
+                raw = resp.read()
+                return resp.status, (json.loads(raw) if raw else {})
+        except urllib.error.HTTPError as e:
+            raw = e.read()
+            # Apple's own UNEXPECTED_ERROR/500s are transient -- retrying
+            # bare has fixed every one seen so far this session. A script
+            # crash here silently drops the subscription from the
+            # submission when run under `| tee` (masks the exit code), so
+            # this must not give up on the first transient blip.
+            if e.code >= 500 and attempt < retries - 1:
+                print(f"HTTP {e.code} on {method} {url} (attempt {attempt + 1}/{retries}), retrying: {raw.decode()[:500]}", file=sys.stderr)
+                time.sleep(2 * (attempt + 1))
+                continue
+            print(f"HTTP {e.code} on {method} {url}: {raw.decode()[:2000]}", file=sys.stderr)
+            raise
 
 
 def put_bytes(url, headers, data):
