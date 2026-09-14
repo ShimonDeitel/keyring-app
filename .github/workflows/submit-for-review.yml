@@ -23,6 +23,15 @@ jobs:
         run: |
           echo -n "$ASC_KEY_BASE64" | base64 --decode > "$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
 
+      - name: Discover subscription version
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          export ASC_KEY_PATH="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          python3 asc_create_subscription.py | tee /tmp/sub_out.log
+          grep "^SUBSCRIPTION_VERSION_ID=" /tmp/sub_out.log >> "$GITHUB_ENV" || true
+
       - name: Submit for review
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}

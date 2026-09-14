@@ -96,8 +96,15 @@ def main():
         print(f"Created review submission: {submission_id}")
 
     _, items_body = req("GET", f"/reviewSubmissions/{submission_id}/items", token)
-    if items_body["data"]:
-        print(f"Submission already has {len(items_body['data'])} item(s) attached")
+    existing_items = items_body["data"]
+    print(f"Submission has {len(existing_items)} item(s) already attached")
+
+    has_version_item = any(
+        i.get("relationships", {}).get("appStoreVersion", {}).get("data", {}).get("id") == version_id
+        for i in existing_items
+    )
+    if has_version_item:
+        print("appStoreVersion already attached.")
     else:
         _, body = req("POST", "/reviewSubmissionItems", token, {
             "data": {
@@ -109,6 +116,32 @@ def main():
             }
         })
         print(f"Attached version to submission item: {body['data']['id']}")
+
+    # Ride the new Keyring Pro Monthly subscription along with this version
+    # submission -- Apple requires a subscription group's first subscription
+    # to go out with an app version, it can't go live on its own.
+    subscription_version_id = os.environ.get("SUBSCRIPTION_VERSION_ID")
+    if subscription_version_id:
+        has_sub_item = any(
+            i.get("relationships", {}).get("subscriptionVersion", {}).get("data", {}).get("id") == subscription_version_id
+            for i in existing_items
+        )
+        if has_sub_item:
+            print("subscriptionVersion already attached.")
+        else:
+            try:
+                _, body = req("POST", "/reviewSubmissionItems", token, {
+                    "data": {
+                        "type": "reviewSubmissionItems",
+                        "relationships": {
+                            "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                            "subscriptionVersion": {"data": {"type": "subscriptionVersions", "id": subscription_version_id}},
+                        },
+                    }
+                })
+                print(f"Attached subscriptionVersion to submission item: {body['data']['id']}")
+            except urllib.error.HTTPError as e:
+                print(f"subscriptionVersion attach failed ({e.code}) -- continuing without it; the app version submission still proceeds.", file=sys.stderr)
 
     status, body = req("PATCH", f"/reviewSubmissions/{submission_id}", token, {
         "data": {
