@@ -260,6 +260,12 @@ def main():
     _, body = req("GET", f"/subscriptions/{sub_id}/subscriptionLocalizations", token)
     print(f"Localizations: {json.dumps(body.get('data'), indent=2)[:1500]}")
 
+    _, body = req("GET", f"/subscriptionGroups/{group_id}/subscriptionGroupLocalizations", token)
+    print(f"Group localizations: {json.dumps(body.get('data'), indent=2)[:1500]}")
+
+    _, body = req("GET", f"/subscriptions/{sub_id}/prices", token)
+    print(f"Prices: {json.dumps(body.get('data'), indent=2)[:1500]}")
+
 
 if __name__ == "__main__":
     main()
