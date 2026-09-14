@@ -25,7 +25,7 @@ struct KeyPhotoView: View {
                 Image(systemName: symbolName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: size * 0.5, height: size * 0.5)
+                    .frame(width: size * 0.68, height: size * 0.68)
                     .foregroundStyle(tintColor)
             }
         }
