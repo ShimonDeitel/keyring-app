@@ -49,7 +49,7 @@ ALSO INCLUDED
 FREE
 Photograph and organize up to 5 keys on one keyring, completely free -- no account needed, everything stays on your device.
 
-KEYRING PRO -- one-time purchase, yours forever
+KEYRING PRO -- $2.99/month, cancel anytime (a one-time unlock option is also available)
 - Unlimited keys and keyrings
 - Loan, spare, and lost-key tracking
 - Location history with maps
