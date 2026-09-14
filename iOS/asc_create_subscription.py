@@ -226,6 +226,19 @@ def ensure_review_note(token, sub_id):
     print("Set review note.")
 
 
+def try_create_subscription_version(token, sub_id):
+    try:
+        status, body = req("POST", "/subscriptionVersions", token, {
+            "data": {
+                "type": "subscriptionVersions",
+                "relationships": {"subscription": {"data": {"type": "subscriptions", "id": sub_id}}},
+            }
+        })
+        print(f"Created subscriptionVersion: {json.dumps(body, indent=2)[:1000]}")
+    except Exception as e:
+        print(f"subscriptionVersions POST failed: {e}", file=sys.stderr)
+
+
 def ensure_review_screenshot(token, sub_id):
     _, body = req("GET", f"/subscriptions/{sub_id}/appStoreReviewScreenshot", token)
     if body.get("data"):
@@ -265,6 +278,7 @@ def main():
     ensure_price(token, sub_id)
     ensure_review_screenshot(token, sub_id)
     ensure_review_note(token, sub_id)
+    try_create_subscription_version(token, sub_id)
     print(f"Subscription ready: group={group_id} subscription={sub_id} productId={PRODUCT_ID}")
 
     _, body = req("GET", f"/subscriptions/{sub_id}", token)
