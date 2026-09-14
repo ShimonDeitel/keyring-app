@@ -17,6 +17,7 @@ asc-subscription-initial-price-patch).
 
 Requires env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, APP_ID
 """
+import base64
 import hashlib
 import json
 import os
@@ -193,23 +194,53 @@ def ensure_price(token, sub_id):
         print(f"No USA price point found matching ${TARGET_PRICE}; skipping price setup.", file=sys.stderr)
         return
 
+    # Apple rejects review submission unless EVERY territory the
+    # subscription is available in has upfront pricing, not just USA --
+    # STATE_ERROR.IAP_SUBMISSION_NOT_ALLOWED_MISSING_PRICING_DATA lists
+    # ~150 missing territories otherwise. Equalizations gives the
+    # locally-equivalent price point per territory for the USA base point;
+    # the territory code lives inside the base64-decoded point id (field
+    # "t"), there's no separate territory relationship on the resource.
+    territory_points = {}  # territory code -> price point id
+    next_url = f"/subscriptionPricePoints/{price_point_id}/equalizations?limit=200"
+    while next_url:
+        status, body = req("GET", next_url, token)
+        for p in body["data"]:
+            padded = p["id"] + "=" * (-len(p["id"]) % 4)
+            decoded = json.loads(base64.urlsafe_b64decode(padded))
+            territory = decoded.get("t")
+            if territory:
+                territory_points[territory] = p["id"]
+        next_url = body.get("links", {}).get("next")
+        if next_url and next_url.startswith("http"):
+            next_url = next_url[len(BASE):]
+    territory_points["USA"] = price_point_id
+    print(f"Pricing {len(territory_points)} territories.")
+
+    included = []
+    price_refs = []
+    for i, (territory, point_id) in enumerate(territory_points.items()):
+        placeholder = f"${{price-{i}}}"
+        price_refs.append({"type": "subscriptionPrices", "id": placeholder})
+        included.append({
+            "type": "subscriptionPrices",
+            "id": placeholder,
+            "attributes": {"preserveCurrentPrice": False},
+            "relationships": {
+                "subscriptionPricePoint": {"data": {"type": "subscriptionPricePoints", "id": point_id}},
+                "territory": {"data": {"type": "territories", "id": territory}},
+            },
+        })
+
     status, body = req("PATCH", f"/subscriptions/{sub_id}", token, {
         "data": {
             "type": "subscriptions",
             "id": sub_id,
-            "relationships": {"prices": {"data": [{"type": "subscriptionPrices", "id": "${new-price}"}]}},
+            "relationships": {"prices": {"data": price_refs}},
         },
-        "included": [{
-            "type": "subscriptionPrices",
-            "id": "${new-price}",
-            "attributes": {"preserveCurrentPrice": False},
-            "relationships": {
-                "subscriptionPricePoint": {"data": {"type": "subscriptionPricePoints", "id": price_point_id}},
-                "territory": {"data": {"type": "territories", "id": "USA"}},
-            },
-        }],
+        "included": included,
     })
-    print(f"Set price (${TARGET_PRICE} USA, point {price_point_id}): {status}")
+    print(f"Set price (${TARGET_PRICE} USA + {len(territory_points) - 1} equalized territories): {status}")
 
 
 def ensure_review_note(token, sub_id):
@@ -308,22 +339,10 @@ def main():
     version_id = get_subscription_version_id(token, sub_id)
     if version_id:
         print(f"SUBSCRIPTION_VERSION_ID={version_id}")
-    print(f"Subscription ready: group={group_id} subscription={sub_id} productId={PRODUCT_ID}")
 
     _, body = req("GET", f"/subscriptions/{sub_id}", token)
-    print(f"Subscription attributes: {json.dumps(body['data']['attributes'], indent=2)}")
-
-    _, body = req("GET", f"/subscriptions/{sub_id}/appStoreReviewScreenshot", token)
-    print(f"Review screenshot: {json.dumps(body.get('data'), indent=2)}")
-
-    _, body = req("GET", f"/subscriptions/{sub_id}/subscriptionLocalizations", token)
-    print(f"Localizations: {json.dumps(body.get('data'), indent=2)[:1500]}")
-
-    _, body = req("GET", f"/subscriptionGroups/{group_id}/subscriptionGroupLocalizations", token)
-    print(f"Group localizations: {json.dumps(body.get('data'), indent=2)[:1500]}")
-
-    _, body = req("GET", f"/subscriptions/{sub_id}/prices?include=subscriptionPricePoint", token)
-    print(f"Prices (with price point): {json.dumps(body, indent=2)[:3000]}")
+    print(f"Subscription state: {body['data']['attributes'].get('state')}")
+    print(f"Subscription ready: group={group_id} subscription={sub_id} productId={PRODUCT_ID}")
 
 
 if __name__ == "__main__":
