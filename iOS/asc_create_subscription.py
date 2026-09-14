@@ -252,12 +252,13 @@ def main():
     print(f"Subscription ready: group={group_id} subscription={sub_id} productId={PRODUCT_ID}")
 
     _, body = req("GET", f"/subscriptions/{sub_id}", token)
-    print(f"Subscription state: {body['data']['attributes'].get('state')}")
-    try:
-        status, body = req("GET", f"/subscriptions/{sub_id}/subscriptionVersion", token)
-        print(f"subscriptionVersion: {json.dumps(body, indent=2)[:1500]}")
-    except Exception as e:
-        print(f"subscriptionVersion GET failed: {e}", file=sys.stderr)
+    print(f"Subscription attributes: {json.dumps(body['data']['attributes'], indent=2)}")
+
+    _, body = req("GET", f"/subscriptions/{sub_id}/appStoreReviewScreenshot", token)
+    print(f"Review screenshot: {json.dumps(body.get('data'), indent=2)}")
+
+    _, body = req("GET", f"/subscriptions/{sub_id}/subscriptionLocalizations", token)
+    print(f"Localizations: {json.dumps(body.get('data'), indent=2)[:1500]}")
 
 
 if __name__ == "__main__":
