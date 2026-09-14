@@ -57,7 +57,10 @@ KEYRING PRO -- $2.99/month, cancel anytime (a one-time unlock option is also ava
 - Visual duplicate detection
 - Search across every keyring
 
-Your keys, your data. Keyring works fully offline and never asks for an account."""
+Your keys, your data. Keyring works fully offline and never asks for an account.
+
+Privacy Policy: https://shimondeitel.github.io/keyring-site/privacy.html
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"""
 
 
 def make_jwt():

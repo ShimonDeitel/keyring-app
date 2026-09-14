@@ -100,6 +100,21 @@ struct PaywallView: View {
                         .buttonStyle(.plain)
                         .font(.footnote)
                         .foregroundStyle(KRTheme.inkFaded)
+
+                        VStack(spacing: 4) {
+                            Text("Keyring Pro Monthly renews automatically at \(purchases.monthlyProduct?.displayPrice ?? "$2.99") every month until canceled. Manage or cancel anytime in Settings > Apple ID > Subscriptions.")
+                                .font(.caption2)
+                                .foregroundStyle(KRTheme.inkFaded)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, KRTheme.Spacing.lg)
+                            HStack(spacing: 16) {
+                                Link("Terms of Use", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                                Link("Privacy Policy", destination: URL(string: "https://shimondeitel.github.io/keyring-site/privacy.html")!)
+                            }
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(KRTheme.brass)
+                        }
+                        .padding(.top, 4)
                         .padding(.bottom, 24)
                     }
                 }

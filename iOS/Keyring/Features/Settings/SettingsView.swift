@@ -63,6 +63,7 @@ struct SettingsView: View {
 
                 Section("About") {
                     Link("Privacy Policy", destination: URL(string: "https://shimondeitel.github.io/keyring-site/privacy.html")!)
+                    Link("Terms of Use", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
                     Link("Contact Support", destination: URL(string: "mailto:s0533495227@gmail.com")!)
                     HStack {
                         Text("Version")
