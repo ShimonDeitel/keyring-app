@@ -7,6 +7,7 @@ struct KeyringsListView: View {
     @State private var showAddKeyring = false
     @State private var showPaywall = false
     @State private var searchText = ""
+    @State private var deletingKeyring: KeyringEntity?
 
     private var searchResults: [(keyring: KeyringEntity, key: KeyEntity)] {
         store.search(searchText)
@@ -48,7 +49,7 @@ struct KeyringsListView: View {
                                 }
                             }
                             .onDelete { offsets in
-                                for index in offsets { store.deleteKeyring(store.keyrings[index]) }
+                                if let index = offsets.first { deletingKeyring = store.keyrings[index] }
                             }
                         }
                     }
@@ -78,6 +79,17 @@ struct KeyringsListView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
+            }
+            .confirmationDialog(
+                deletingKeyring.map { "Delete \"\($0.name)\" and its \($0.keyCount) key\($0.keyCount == 1 ? "" : "s")?" } ?? "",
+                isPresented: Binding(get: { deletingKeyring != nil }, set: { if !$0 { deletingKeyring = nil } }),
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    if let deletingKeyring { store.deleteKeyring(deletingKeyring) }
+                    deletingKeyring = nil
+                }
+                Button("Cancel", role: .cancel) { deletingKeyring = nil }
             }
         }
     }
