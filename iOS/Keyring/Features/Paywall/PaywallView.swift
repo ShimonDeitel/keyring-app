@@ -12,6 +12,7 @@ struct PaywallView: View {
     @Environment(PurchaseManager.self) private var purchases
     @Environment(\.dismiss) private var dismiss
     @State private var purchasing = false
+    @State private var purchasingOneTime = false
 
     var body: some View {
         NavigationStack {
@@ -45,7 +46,7 @@ struct PaywallView: View {
                         Button {
                             purchasing = true
                             Task {
-                                await purchases.purchase()
+                                await purchases.purchaseMonthly()
                                 purchasing = false
                                 if purchases.isPro { dismiss() }
                             }
@@ -54,9 +55,9 @@ struct PaywallView: View {
                                 if purchasing {
                                     ProgressView().tint(.white)
                                 } else {
-                                    Text(purchases.product.map { "Unlock for \($0.displayPrice)" } ?? "Unlock Pro")
+                                    Text(purchases.monthlyProduct.map { "Subscribe -- \($0.displayPrice)/month" } ?? "Subscribe to Pro")
                                         .font(.headline)
-                                    Text("One-time purchase. Yours forever.")
+                                    Text("Cancel anytime.")
                                         .font(.caption)
                                         .opacity(0.85)
                                 }
@@ -68,9 +69,30 @@ struct PaywallView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
                         .buttonStyle(.plain)
-                        .disabled(purchasing || purchases.product == nil)
+                        .disabled(purchasing || purchases.monthlyProduct == nil)
                         .padding(.horizontal, 24)
                         .accessibilityIdentifier("unlockProButton")
+
+                        Button {
+                            purchasingOneTime = true
+                            Task {
+                                await purchases.purchase()
+                                purchasingOneTime = false
+                                if purchases.isPro { dismiss() }
+                            }
+                        } label: {
+                            if purchasingOneTime {
+                                ProgressView()
+                            } else {
+                                Text(purchases.product.map { "Or unlock forever for \($0.displayPrice)" } ?? "Or unlock forever")
+                                    .font(.footnote)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(KRTheme.inkFaded)
+                        .disabled(purchasing || purchasingOneTime || purchases.product == nil)
+                        .padding(.top, 2)
+                        .accessibilityIdentifier("unlockProOneTimeButton")
 
                         Button("Restore Purchases") {
                             Task { await purchases.restore() }

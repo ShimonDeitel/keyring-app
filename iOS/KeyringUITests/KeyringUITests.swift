@@ -160,7 +160,7 @@ final class KeyringUITests: XCTestCase {
         app.buttons["addKeyButton"].tap()
         XCTAssertTrue(app.staticTexts["Keyring Pro"].waitForExistence(timeout: 12))
 
-        let unlockButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Unlock'")).firstMatch
+        let unlockButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Subscribe' OR label CONTAINS[c] 'unlock'")).firstMatch
         XCTAssertTrue(unlockButton.waitForExistence(timeout: 12))
         unlockButton.tap()
 

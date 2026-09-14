@@ -21,7 +21,36 @@
   "settings" : {
     "_askToBuyEnabled" : false
   },
-  "subscriptionGroups" : [],
+  "subscriptionGroups" : [
+    {
+      "id" : "21000000000001",
+      "localizations" : [],
+      "name" : "Keyring Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "21000000000002",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited keys and keyrings, loan tracking with reminders, location history, duplicate detection, and full search.",
+              "displayName" : "Keyring Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "keyring_pro_monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Keyring Pro Monthly",
+          "subscriptionGroupID" : "21000000000001",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
   "version" : {
     "major" : 3,
     "minor" : 0
