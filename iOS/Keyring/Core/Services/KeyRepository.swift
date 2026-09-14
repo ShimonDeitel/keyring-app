@@ -64,6 +64,9 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
 
     func deleteKeyring(_ keyring: KeyringEntity) throws {
         SpotlightIndexer.deindexKeyring(keyring)
+        for key in keyring.sortedKeys {
+            LoanReminderService.cancel(for: key)
+        }
         context.delete(keyring)
         try save()
     }
@@ -109,6 +112,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
 
     func deleteKey(_ key: KeyEntity) throws {
         SpotlightIndexer.deindex(key)
+        LoanReminderService.cancel(for: key)
         context.delete(key)
         try save()
     }
@@ -139,6 +143,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         key.updatedAt = .now
         log(.loaned, for: key, person: person)
         try save()
+        LoanReminderService.schedule(for: key)
     }
 
     func markReturned(_ key: KeyEntity) throws {
@@ -150,6 +155,7 @@ final class SwiftDataKeyRepository: KeyRepositoryProtocol {
         key.updatedAt = .now
         log(.returned, for: key, person: person)
         try save()
+        LoanReminderService.cancel(for: key)
     }
 
     func markLost(_ key: KeyEntity) throws {

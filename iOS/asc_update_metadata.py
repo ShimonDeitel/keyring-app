@@ -20,25 +20,26 @@ APP_ID = os.environ["APP_ID"]
 
 BASE = "https://api.appstoreconnect.apple.com/v1"
 
+TARGET_VERSION = "2.1"
+
 SUBTITLE = "Key Organizer & Tracker"
 KEYWORDS = "key,keyring,organizer,identifier,tracker,spare,lost,inventory,holder,manager,household,locksmith"
 PROMOTIONAL_TEXT = (
-    "New in 2.0: loan tracking, location confirmation with maps, on-device "
-    "duplicate detection, full activity history, and Siri Shortcuts support."
+    "New in 2.1: loan reminders that actually notify you when a key is due back, "
+    "plus everything from 2.0 -- location confirmation, duplicate detection, and Siri Shortcuts."
 )
-WHATS_NEW = """Keyring 2.0 is a big update:
-- Loan tracking -- mark a key loaned, see who has it, get an activity trail when it's returned
-- Location confirmation -- log where you last saw a key, with a map
-- On-device duplicate detection when you photograph a new key
-- Full activity history for every key
-- Siri Shortcuts and Spotlight search
-- A cleaner keyring detail screen and paywall
+WHATS_NEW = """Keyring 2.1:
+- Loan reminders -- set a return date when you loan a key and get notified the day it's due
+- Small fixes and polish
 
 Thanks for using Keyring -- keep the feedback coming."""
 
 DESCRIPTION = """Stop wondering what that mystery key opens. Keyring lets you photograph and label every key so you always know which is which -- then tap the ring to fan them out for quick browsing.
 
-NEW IN 2.0
+NEW IN 2.1
+- Loan reminders -- get notified the day a loaned key is due back, not just a note that it's overdue
+
+ALSO INCLUDED
 - Loan tracking -- know exactly who has your spare key and when it's due back
 - Location confirmation -- log where you last saw a key, with a map
 - Duplicate detection -- instantly spot near-identical keys by photo, entirely on-device
@@ -183,14 +184,14 @@ def main():
         else:
             print("No VALID (finished-processing) build available yet -- Apple is still processing the upload. Re-run this workflow in a few minutes.")
 
-    if version["attributes"]["versionString"] != "2.0":
+    if version["attributes"]["versionString"] != TARGET_VERSION:
         status, body = req(
             "PATCH",
             f"/appStoreVersions/{version_id}",
             token,
-            {"data": {"type": "appStoreVersions", "id": version_id, "attributes": {"versionString": "2.0"}}},
+            {"data": {"type": "appStoreVersions", "id": version_id, "attributes": {"versionString": TARGET_VERSION}}},
         )
-        print(f"versionString corrected to 2.0: {status}")
+        print(f"versionString corrected to {TARGET_VERSION}: {status}")
 
     status, body = req("GET", f"/appStoreVersions/{version_id}/appStoreVersionLocalizations", token)
     en_us_v = next(loc for loc in body["data"] if loc["attributes"]["locale"] == "en-US")
