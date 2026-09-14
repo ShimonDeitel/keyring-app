@@ -17,6 +17,7 @@ struct KeyFormView: View {
     @State private var photoData: Data?
     @State private var isCheckingDuplicates = false
     @State private var duplicateCandidates: [DuplicateDetectionService.Candidate] = []
+    @State private var showDeleteConfirm = false
 
     init(keyring: KeyringEntity, existing: KeyEntity?) {
         self.keyring = keyring
@@ -67,8 +68,7 @@ struct KeyFormView: View {
                 if isEditing {
                     Section {
                         Button("Delete Key", role: .destructive) {
-                            if let existing { store.deleteKey(existing) }
-                            dismiss()
+                            showDeleteConfirm = true
                         }
                         .buttonStyle(.plain)
                         .accessibilityIdentifier("deleteKeyButton")
@@ -123,6 +123,12 @@ struct KeyFormView: View {
                         duplicateCandidates = []
                     }
                 )
+            }
+            .confirmationDialog("Delete this key?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+                Button("Delete", role: .destructive) {
+                    if let existing { store.deleteKey(existing) }
+                    dismiss()
+                }
             }
         }
     }
