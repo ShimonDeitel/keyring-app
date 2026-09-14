@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Submit the pending PREPARE_FOR_SUBMISSION app store version for Apple
-review, using the current reviewSubmissions flow (appStoreVersionSubmissions
-was retired). Schema confirmed against Apple's real OpenAPI-generated Swift
-SDK types (AvdLee/appstoreconnect-swift-sdk), not just the spec mirror used
+"""Submit the pending app version -- and, if ready, the new Keyring Pro
+Monthly subscription -- for Apple review, using the current
+reviewSubmissions flow (appStoreVersionSubmissions was retired). Schema
+confirmed against Apple's real OpenAPI-generated Swift SDK types
+(AvdLee/appstoreconnect-swift-sdk), not just the spec mirror used
 elsewhere in this repo, since the mirror lacks this resource entirely.
 
-Flow:
-  GET  /v1/apps/{id}/reviewSubmissions          -- reuse an open one if present
-  POST /v1/reviewSubmissions                    -- platform + app relationship
-  POST /v1/reviewSubmissionItems                -- attach the appStoreVersion
-  PATCH /v1/reviewSubmissions/{id}               -- attributes.submitted = true
+A subscription group's FIRST subscription can't go live on its own --
+Apple requires both the subscriptionVersion AND the subscriptionGroupVersion
+to ride along with an app version submission
+(STATE_ERROR.SUBSCRIPTION_SUBMISSION_REQUIRES_GROUP_VERSION). If the app
+version was already submitted on its own before the subscription was
+READY_TO_SUBMIT, the review submission is locked against new items --
+cancel it (reverts the version to DEVELOPER_REJECTED, not
+PREPARE_FOR_SUBMISSION) and resubmit fresh with everything together.
 
 Requires env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH, APP_ID
+Optional env: SUBSCRIPTION_VERSION_ID, SUBSCRIPTION_GROUP_VERSION_ID
 """
 import json
 import os
@@ -30,8 +35,7 @@ APP_ID = os.environ["APP_ID"]
 BASE = "https://api.appstoreconnect.apple.com/v1"
 OPEN_STATES = {"READY_FOR_REVIEW", "WAITING_FOR_REVIEW", "IN_REVIEW", "UNRESOLVED_ISSUES"}
 # DEVELOPER_REJECTED is the state a version lands in after *we* cancel a
-# review submission (e.g. to re-submit bundled with a new subscription) --
-# it's editable-again, not "Apple rejected it".
+# review submission -- it's editable-again, not "Apple rejected it".
 PENDING_STATES = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "METADATA_REJECTED", "INVALID_BINARY", "REJECTED"}
 
 
@@ -60,35 +64,80 @@ def req(method, path, token, body=None):
         raise
 
 
+def find_pending_version(token):
+    _, versions = req("GET", f"/apps/{APP_ID}/appStoreVersions?limit=10", token)
+    pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] in PENDING_STATES]
+    return pending[0]["id"] if pending else None
+
+
+def ensure_export_compliance(token, version_id):
+    _, build_body = req("GET", f"/appStoreVersions/{version_id}/build", token)
+    if not build_body.get("data"):
+        return
+    build_id = build_body["data"]["id"]
+    _, full_build = req("GET", f"/builds/{build_id}", token)
+    if full_build["data"]["attributes"].get("usesNonExemptEncryption") is None:
+        req("PATCH", f"/builds/{build_id}", token, {
+            "data": {"type": "builds", "id": build_id, "attributes": {"usesNonExemptEncryption": False}}
+        })
+        print(f"Set usesNonExemptEncryption=false on build {build_id}")
+    else:
+        print(f"Build {build_id} already declares usesNonExemptEncryption={full_build['data']['attributes']['usesNonExemptEncryption']}")
+
+
+def desired_items(version_id, subscription_version_id, subscription_group_version_id):
+    items = []
+    if version_id:
+        items.append(("appStoreVersion", "appStoreVersions", version_id))
+    if subscription_version_id:
+        items.append(("subscriptionVersion", "subscriptionVersions", subscription_version_id))
+    if subscription_group_version_id:
+        items.append(("subscriptionGroupVersion", "subscriptionGroupVersions", subscription_group_version_id))
+    return items
+
+
+def attach_items(token, submission_id, items, existing_items):
+    """Attach each (relationship_name, type, id) not already present.
+    Returns True if every item ended up attached (already-present or
+    newly attached), False if any attach was rejected."""
+    all_ok = True
+    for rel_name, rel_type, rel_id in items:
+        already = any(
+            i.get("relationships", {}).get(rel_name, {}).get("data", {}).get("id") == rel_id
+            for i in existing_items
+        )
+        if already:
+            print(f"{rel_name} already attached.")
+            continue
+        try:
+            _, body = req("POST", "/reviewSubmissionItems", token, {
+                "data": {
+                    "type": "reviewSubmissionItems",
+                    "relationships": {
+                        "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
+                        rel_name: {"data": {"type": rel_type, "id": rel_id}},
+                    },
+                }
+            })
+            print(f"Attached {rel_name}: {body['data']['id']}")
+        except urllib.error.HTTPError as e:
+            all_ok = False
+            print(f"{rel_name} attach failed ({e.code}).", file=sys.stderr)
+    return all_ok
+
+
 def main():
     token = make_jwt()
 
-    _, versions = req("GET", f"/apps/{APP_ID}/appStoreVersions?limit=10", token)
-    pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] in PENDING_STATES]
-    version_id = None
-    if pending:
-        version_id = pending[0]["id"]
-        print(f"Target version: {version_id} ({pending[0]['attributes']['versionString']})")
-
-        # Apple rejects the submission until the attached build declares its
-        # export-compliance status. Info.plist now sets this at build time
-        # (ITSAppUsesNonExemptEncryption), so only PATCH builds where it's
-        # still unset -- Apple 409s ENTITY_ERROR.ATTRIBUTE.INVALID if you
-        # try to "update" a value that's already set, even to the same value.
-        _, build_body = req("GET", f"/appStoreVersions/{version_id}/build", token)
-        if build_body.get("data"):
-            build_id = build_body["data"]["id"]
-            _, full_build = req("GET", f"/builds/{build_id}", token)
-            if full_build["data"]["attributes"].get("usesNonExemptEncryption") is None:
-                req("PATCH", f"/builds/{build_id}", token, {
-                    "data": {"type": "builds", "id": build_id, "attributes": {"usesNonExemptEncryption": False}}
-                })
-                print(f"Set usesNonExemptEncryption=false on build {build_id}")
-            else:
-                print(f"Build {build_id} already declares usesNonExemptEncryption={full_build['data']['attributes']['usesNonExemptEncryption']}")
+    version_id = find_pending_version(token)
+    if version_id:
+        print(f"Pending app version: {version_id}")
+        ensure_export_compliance(token, version_id)
     else:
-        print("No appStoreVersion in PREPARE_FOR_SUBMISSION (already submitted, or none pending) -- "
-              "still checking whether the subscription needs attaching to the open submission.")
+        print("No pending app version (already submitted, or none pending).")
+
+    subscription_version_id = os.environ.get("SUBSCRIPTION_VERSION_ID")
+    subscription_group_version_id = os.environ.get("SUBSCRIPTION_GROUP_VERSION_ID")
 
     _, existing = req("GET", f"/apps/{APP_ID}/reviewSubmissions", token)
     open_submission = next((s for s in existing["data"] if s["attributes"].get("state") in OPEN_STATES), None)
@@ -111,60 +160,14 @@ def main():
     existing_items = items_body["data"]
     print(f"Submission has {len(existing_items)} item(s) already attached")
 
-    has_version_item = version_id is not None and any(
-        i.get("relationships", {}).get("appStoreVersion", {}).get("data", {}).get("id") == version_id
-        for i in existing_items
-    )
-    if not version_id:
-        print("No pending appStoreVersion to attach (already attached earlier, or none pending).")
-    elif has_version_item:
-        print("appStoreVersion already attached.")
-    else:
-        _, body = req("POST", "/reviewSubmissionItems", token, {
-            "data": {
-                "type": "reviewSubmissionItems",
-                "relationships": {
-                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
-                },
-            }
-        })
-        print(f"Attached version to submission item: {body['data']['id']}")
+    items = desired_items(version_id, subscription_version_id, subscription_group_version_id)
+    all_attached = attach_items(token, submission_id, items, existing_items)
 
-    # Ride the new Keyring Pro Monthly subscription along with this version
-    # submission -- Apple requires a subscription group's first subscription
-    # to go out with an app version, it can't go live on its own.
-    subscription_version_id = os.environ.get("SUBSCRIPTION_VERSION_ID")
-    sub_attach_failed = False
-    if subscription_version_id:
-        has_sub_item = any(
-            i.get("relationships", {}).get("subscriptionVersion", {}).get("data", {}).get("id") == subscription_version_id
-            for i in existing_items
-        )
-        if has_sub_item:
-            print("subscriptionVersion already attached.")
-        else:
-            try:
-                _, body = req("POST", "/reviewSubmissionItems", token, {
-                    "data": {
-                        "type": "reviewSubmissionItems",
-                        "relationships": {
-                            "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                            "subscriptionVersion": {"data": {"type": "subscriptionVersions", "id": subscription_version_id}},
-                        },
-                    }
-                })
-                print(f"Attached subscriptionVersion to submission item: {body['data']['id']}")
-            except urllib.error.HTTPError as e:
-                sub_attach_failed = True
-                print(f"subscriptionVersion attach failed ({e.code}) on the current submission (state={open_submission['attributes']['state'] if open_submission else 'new'}).", file=sys.stderr)
-
-    # A submission already WAITING_FOR_REVIEW/IN_REVIEW is locked against new
-    # items -- that's exactly the case here (2.1 was submitted before this
-    # script knew about the subscription). Cancel it and resubmit fresh with
-    # both items together rather than leaving the subscription stranded.
-    if sub_attach_failed and open_submission and open_submission["attributes"]["state"] != "READY_FOR_REVIEW":
-        print(f"Canceling locked submission {submission_id} to resubmit with the subscription included.")
+    # A submission already WAITING_FOR_REVIEW/IN_REVIEW is locked against
+    # new items -- cancel and resubmit fresh with everything together
+    # rather than leaving anything stranded.
+    if not all_attached and open_submission and open_submission["attributes"]["state"] != "READY_FOR_REVIEW":
+        print(f"Canceling locked submission {submission_id} to resubmit with everything included.")
         req("PATCH", f"/reviewSubmissions/{submission_id}", token, {
             "data": {"type": "reviewSubmissions", "id": submission_id, "attributes": {"canceled": True}}
         })
@@ -179,36 +182,18 @@ def main():
         submission_id = body["data"]["id"]
         print(f"Created fresh review submission: {submission_id}")
 
-        # Canceling the old submission likely reverted the app version back
-        # to PREPARE_FOR_SUBMISSION -- re-fetch rather than trust the
-        # possibly-stale version_id captured before the cancel.
-        _, versions = req("GET", f"/apps/{APP_ID}/appStoreVersions?limit=10", token)
-        pending = [v for v in versions["data"] if v["attributes"]["appStoreState"] in PENDING_STATES]
-        version_id = pending[0]["id"] if pending else version_id
+        # Canceling reverts the app version to DEVELOPER_REJECTED (still a
+        # PENDING_STATE) -- re-fetch rather than trust the possibly-stale
+        # version_id captured before the cancel.
+        version_id = find_pending_version(token) or version_id
         print(f"Version to re-attach after cancel: {version_id}")
 
-        if version_id:
-            _, body = req("POST", "/reviewSubmissionItems", token, {
-                "data": {
-                    "type": "reviewSubmissionItems",
-                    "relationships": {
-                        "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                        "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
-                    },
-                }
-            })
-            print(f"Re-attached appStoreVersion: {body['data']['id']}")
+        items = desired_items(version_id, subscription_version_id, subscription_group_version_id)
+        all_attached = attach_items(token, submission_id, items, [])
 
-        _, body = req("POST", "/reviewSubmissionItems", token, {
-            "data": {
-                "type": "reviewSubmissionItems",
-                "relationships": {
-                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": submission_id}},
-                    "subscriptionVersion": {"data": {"type": "subscriptionVersions", "id": subscription_version_id}},
-                },
-            }
-        })
-        print(f"Attached subscriptionVersion: {body['data']['id']}")
+    if not all_attached:
+        print("Not everything attached even after retrying -- not submitting. Check the errors above.", file=sys.stderr)
+        sys.exit(1)
 
     status, body = req("PATCH", f"/reviewSubmissions/{submission_id}", token, {
         "data": {

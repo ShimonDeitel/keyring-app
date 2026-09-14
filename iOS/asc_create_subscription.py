@@ -265,17 +265,19 @@ def ensure_review_note(token, sub_id):
     print("Set review note.")
 
 
-def get_subscription_version_id(token, sub_id):
-    """A subscriptionVersion is auto-created alongside the subscription --
-    there's no GET path that surfaces it directly, but POSTing a new one
-    409s with STATE_ERROR.ALREADY_EXISTS and names the existing id in the
-    error detail. Parse it out of there. (Doesn't use the shared req()
-    helper because that already consumes the error body once.)"""
-    url = BASE + "/subscriptionVersions"
+def get_inflight_version_id(token, resource_path, resource_type, relationship_name, relationship_type, relationship_id):
+    """Both subscriptionVersions and subscriptionGroupVersions are
+    auto-created alongside their parent (subscription / subscription
+    group) -- there's no GET path that surfaces them directly, but
+    POSTing a new one 409s with STATE_ERROR.ALREADY_EXISTS and names the
+    existing id in the error detail. Parse it out of there. (Doesn't use
+    the shared req() helper because that already consumes the error body
+    once.)"""
+    url = BASE + resource_path
     data = json.dumps({
         "data": {
-            "type": "subscriptionVersions",
-            "relationships": {"subscription": {"data": {"type": "subscriptions", "id": sub_id}}},
+            "type": resource_type,
+            "relationships": {relationship_name: {"data": {"type": relationship_type, "id": relationship_id}}},
         }
     }).encode()
     r = urllib.request.Request(url, data=data, method="POST")
@@ -285,7 +287,7 @@ def get_subscription_version_id(token, sub_id):
         with urllib.request.urlopen(r) as resp:
             body = json.loads(resp.read())
             version_id = body["data"]["id"]
-            print(f"Created new subscriptionVersion: {version_id}")
+            print(f"Created new {resource_type}: {version_id}")
             return version_id
     except urllib.error.HTTPError as e:
         raw = e.read().decode()
@@ -298,9 +300,9 @@ def get_subscription_version_id(token, sub_id):
                 match = re.search(r"inflight version with id '([0-9a-f-]+)'", err.get("detail", ""))
                 if match:
                     version_id = match.group(1)
-                    print(f"Existing subscriptionVersion: {version_id}")
+                    print(f"Existing {resource_type}: {version_id}")
                     return version_id
-        print(f"subscriptionVersions POST failed unexpectedly ({e.code}): {raw[:1000]}", file=sys.stderr)
+        print(f"{resource_type} POST failed unexpectedly ({e.code}): {raw[:1000]}", file=sys.stderr)
         return None
 
 
@@ -343,9 +345,17 @@ def main():
     ensure_price(token, sub_id)
     ensure_review_screenshot(token, sub_id)
     ensure_review_note(token, sub_id)
-    version_id = get_subscription_version_id(token, sub_id)
+    version_id = get_inflight_version_id(
+        token, "/subscriptionVersions", "subscriptionVersions", "subscription", "subscriptions", sub_id
+    )
     if version_id:
         print(f"SUBSCRIPTION_VERSION_ID={version_id}")
+
+    group_version_id = get_inflight_version_id(
+        token, "/subscriptionGroupVersions", "subscriptionGroupVersions", "subscriptionGroup", "subscriptionGroups", group_id
+    )
+    if group_version_id:
+        print(f"SUBSCRIPTION_GROUP_VERSION_ID={group_version_id}")
 
     _, body = req("GET", f"/subscriptions/{sub_id}", token)
     print(f"Subscription state: {body['data']['attributes'].get('state')}")
