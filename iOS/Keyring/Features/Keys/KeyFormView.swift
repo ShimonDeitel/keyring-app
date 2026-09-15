@@ -36,8 +36,10 @@ struct KeyFormView: View {
         NavigationStack {
             Form {
                 Section("Key") {
-                    TextField("What does this key open? (e.g. Front Door)", text: $name)
+                    TextField("Name this key (e.g. Front Door Key)", text: $name)
                         .accessibilityIdentifier("keyLabelField")
+                    TextField("What does it open? (e.g. Front Door)", text: $opens)
+                        .accessibilityIdentifier("keyOpensField")
                     Picker("Category", selection: $category) {
                         ForEach(KeyCategory.allCases) { cat in
                             Label(cat.displayName, systemImage: cat.symbolName)

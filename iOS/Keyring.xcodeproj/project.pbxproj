@@ -10,6 +10,7 @@
 		02927EB86C26A48501E89103 /* KeyringEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51A107DEDE094600F67D3EAE /* KeyringEntity.swift */; };
 		0C2A906343159436BE2AD209 /* KeyringApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70D83FE11931A86AB0FED9ED /* KeyringApp.swift */; };
 		13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A02D7DE358F828380103BB /* KeyDetailView.swift */; };
+		1BCC63A01BBF17B1BA2C593F /* LoanReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBD123B3B2FA681B438B568C /* LoanReminderService.swift */; };
 		1CE8F614917DB0906F839B2E /* KeyringStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8819FE514C4335BD7C9F450 /* KeyringStore.swift */; };
 		201099A2F9D357E4DC423F81 /* KeyringUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */; };
 		218C8FA3F0E353678A6A01DD /* DuplicateDetectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DD551BAF55163AC51920C0 /* DuplicateDetectionService.swift */; };
@@ -26,6 +27,7 @@
 		486BB49A35D0CEE6CF143F32 /* KeyHistoryEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF206750D858C0483B83C90E /* KeyHistoryEntity.swift */; };
 		513A097ADC281F088B3958C6 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D57DEF171B4DA3354DDE742 /* LocationProvider.swift */; };
 		5A5975C1CF77C75EA58AB7FB /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2ADE74E08E7F649BF7E65B /* PurchaseManager.swift */; };
+		72EE1069EF23E9955981A507 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14683A65C7F780ED5B6593D2 /* Haptics.swift */; };
 		75EBC8CEE3BB39E071B710A7 /* KeyringRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B254000BF3E4BF774089A9 /* KeyringRowView.swift */; };
 		8AA71766B3CCAF934FBFA22F /* AddEditKeyringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7B2377930AD9CCB3E09A5E /* AddEditKeyringView.swift */; };
 		A02C3BC58D7F94D52FAD59F2 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAA1CC9C19CFC398C878B65 /* PersistenceController.swift */; };
@@ -71,6 +73,7 @@
 		0BC0422F65BB4C7BB1D46BD0 /* KeyringIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringIntents.swift; sourceTree = "<group>"; };
 		0C4C5A0EB9F1C1E34958E9D6 /* SpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightIndexer.swift; sourceTree = "<group>"; };
 		0FC0294837165C8681A2103F /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		14683A65C7F780ED5B6593D2 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		20C733BCAA6C40A06F5177AC /* KeyringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringTests.swift; sourceTree = "<group>"; };
 		22F0A823586D00837CA297CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2DF379E683906A95AE9D7719 /* KeyHistoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyHistoryRowView.swift; sourceTree = "<group>"; };
@@ -107,6 +110,7 @@
 		CA2ADE74E08E7F649BF7E65B /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		D0013FF69E37140EF6AB74B9 /* KeyringDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringDetailView.swift; sourceTree = "<group>"; };
 		DB1268AFF0E4654D267D3FC1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		DBD123B3B2FA681B438B568C /* LoanReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoanReminderService.swift; sourceTree = "<group>"; };
 		DF206750D858C0483B83C90E /* KeyHistoryEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyHistoryEntity.swift; sourceTree = "<group>"; };
 		E326F840E2DCC4C67ADEC1D8 /* KeyringUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyringUITests.swift; sourceTree = "<group>"; };
 		EBAA1CC9C19CFC398C878B65 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
@@ -119,6 +123,7 @@
 			children = (
 				87567674B2EEF26DCE5584E8 /* AppIntents */,
 				BEE39F755C74D13BBA3071AA /* Location */,
+				84246A7491D290A84342F115 /* Notifications */,
 				FD844677B1B252F762F2F551 /* Spotlight */,
 				EF33DAEDFE4ADE2FD26C3098 /* StoreKit */,
 				FB0705B05601ED9298F70490 /* Vision */,
@@ -219,6 +224,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		84246A7491D290A84342F115 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				DBD123B3B2FA681B438B568C /* LoanReminderService.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
 		84DEB47D07CDA429A1DA81E9 /* Keys */ = {
 			isa = PBXGroup;
 			children = (
@@ -305,6 +318,7 @@
 		DAC45A611E0B096FE71CAB72 /* DesignSystem */ = {
 			isa = PBXGroup;
 			children = (
+				14683A65C7F780ED5B6593D2 /* Haptics.swift */,
 				A7821A3C55D860D83BC23DD4 /* Theme.swift */,
 			);
 			path = DesignSystem;
@@ -505,6 +519,7 @@
 				36631D96EDF37C8BD97AE63C /* Date+Keyring.swift in Sources */,
 				218C8FA3F0E353678A6A01DD /* DuplicateDetectionService.swift in Sources */,
 				E05E4C3ACAAA5CCC71AE53FC /* EmptyStateView.swift in Sources */,
+				72EE1069EF23E9955981A507 /* Haptics.swift in Sources */,
 				25B4A78CEE1CA7CD9D9CD72D /* KeyAppEntity.swift in Sources */,
 				DC14E4AF81515D0BDD0A1609 /* KeyCategory.swift in Sources */,
 				13E3CE2B50FA6E51D0B11ABF /* KeyDetailView.swift in Sources */,
@@ -523,6 +538,7 @@
 				1CE8F614917DB0906F839B2E /* KeyringStore.swift in Sources */,
 				3C62DBC1CFB000C7CC8B0A92 /* KeyringsListView.swift in Sources */,
 				E73D9687009BB6500E6C9788 /* LegacyDataMigrator.swift in Sources */,
+				1BCC63A01BBF17B1BA2C593F /* LoanReminderService.swift in Sources */,
 				513A097ADC281F088B3958C6 /* LocationProvider.swift in Sources */,
 				CF0F50E92942A82E6D3F2576 /* OnboardingView.swift in Sources */,
 				33F25798CA4488B6CB86ACED /* PaywallView.swift in Sources */,
@@ -620,7 +636,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -794,7 +810,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

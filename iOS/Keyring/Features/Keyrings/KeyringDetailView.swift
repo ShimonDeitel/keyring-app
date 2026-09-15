@@ -242,7 +242,11 @@ struct KeyRow: View {
                             .foregroundStyle(KRTheme.brass)
                     }
                 }
-                if !key.notes.isEmpty {
+                if !key.opens.isEmpty {
+                    Text("Opens \(key.opens)")
+                        .font(.subheadline)
+                        .foregroundStyle(KRTheme.inkFaded)
+                } else if !key.notes.isEmpty {
                     Text(key.notes)
                         .font(.subheadline)
                         .foregroundStyle(KRTheme.inkFaded)
